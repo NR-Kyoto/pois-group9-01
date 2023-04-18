@@ -13,3 +13,7 @@ docker compose up
 docker compose exec django bash
 
 でコンテナに接続できる
+
+Webサーバーの起動は
+
+python manage.py runserver 0:8000
