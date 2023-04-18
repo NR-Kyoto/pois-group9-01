@@ -17,3 +17,5 @@ docker compose exec django bash
 Webサーバーの起動は
 
 python manage.py runserver 0:8000
+
+<!--test (anyone can erase this later)-->
