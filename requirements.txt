@@ -1,0 +1,5 @@
+###### Requirements without Version Specifiers ######`
+openai
+
+###### Requirements with Version Specifiers ######`
+django==3.2
