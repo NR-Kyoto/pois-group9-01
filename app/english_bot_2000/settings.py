@@ -37,6 +37,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'home.apps.HomeConfig',
+    'evaluation.apps.EvaluationConfig',
+    'login.apps.LoginConfig',
+    'vocab.apps.VocabConfig',
+    'chat.apps.Chatconfig',
 ]
 
 MIDDLEWARE = [
