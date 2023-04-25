@@ -41,7 +41,7 @@ INSTALLED_APPS = [
     'evaluation.apps.EvaluationConfig',
     'login.apps.LoginConfig',
     'vocab.apps.VocabConfig',
-    'chat.apps.Chatconfig',
+    'chat.apps.ChatConfig',
 ]
 
 MIDDLEWARE = [
