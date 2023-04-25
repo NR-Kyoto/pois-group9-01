@@ -18,3 +18,7 @@ RUN pip install --upgrade setuptools
 
 RUN pip install django==3.2
 RUN pip install openai
+RUN pip install language-tool-python
+
+
+RUN apt-get install -y default-jre
