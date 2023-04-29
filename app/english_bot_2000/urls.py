@@ -24,5 +24,6 @@ urlpatterns = [
     path('login/', include('login.urls')),
     path('evaluation/', include('evaluation.urls')),
     path('vocab/', include('vocab.urls')),
+    path('database/', include('database.urls')),
     path('', RedirectView.as_view(url='home/'))
 ]

@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'login.apps.LoginConfig',
     'vocab.apps.VocabConfig',
     'chat.apps.ChatConfig',
+    'database.apps.DatabaseConfig',
 ]
 
 MIDDLEWARE = [
