@@ -6,6 +6,7 @@ from deep_translator import GoogleTranslator # 翻訳
 import language_tool_python # 文法チェック
 
 import re # 正規表現
+import json # ResponseをJsonで
 
 check_categories = ['CONFUSED_WORDS', 'GRAMMAR', 'REPETITIONS', 'TYPOS']
 
@@ -66,6 +67,17 @@ class error:
         html += '</div>'
         return html
 
+    
+    def to_json(self):
+        dic = dict({
+            "sentence" : self.sentence,
+            "start_pos" : self.start,
+            "end_pos" : self.end,
+            "error_message" : self.message,
+            "fixed_sentence" : self.suggestion
+        })
+        return dic
+
 def evaluationpage(request):
 
     sentances = split_sentances(texts)
@@ -78,13 +90,21 @@ def evaluationpage(request):
     score = len(errors) / len(sentances)
 
     # html = "error num : " + str(len(errors)) + " sentances : " + str(len(sentances))
-    html = 'Evaluation : ' + 'Excellent' if score < 0.3 else 'Good' if score < 0.5 else 'Poor'
-    html += ' (Score : ' + str(score) + ')'
+    # html = 'Evaluation : ' + 'Excellent' if score < 0.3 else 'Good' if score < 0.5 else 'Poor'
+    # html += ' (Score : ' + str(score) + ')'
+    errors_json = []
     for e in errors:
 
-        html += e.to_html()
+        # html += e.to_html()
+        errors_json.append(e.to_json())
 
-    return HttpResponse(html)
+    data = {
+        "score" : score,
+        "errors" : errors_json
+    }
+
+    # return HttpResponse(html)
+    return HttpResponse(json.dumps(data, indent=2, ensure_ascii=False), content_type = "application/json; charset=utf-8")
 
 
 # 1文ずつに分割
