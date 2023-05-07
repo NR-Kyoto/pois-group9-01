@@ -1,5 +1,7 @@
 ###### Requirements without Version Specifiers ######`
 openai
 
+azure-cognitiveservices-speech # for evaluate speech
+
 ###### Requirements with Version Specifiers ######`
 django==3.2

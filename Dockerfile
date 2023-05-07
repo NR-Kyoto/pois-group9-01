@@ -18,3 +18,5 @@ RUN pip install --upgrade setuptools
 
 RUN pip install django==3.2
 RUN pip install openai
+
+RUN pip install azure-cognitiveservices-speech # 音声評価

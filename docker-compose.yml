@@ -4,6 +4,9 @@ services:
     build: .
     container_name: 'django'
     working_dir: '/root/'
+    environment:
+        COG_SERVICE_KEY: ${COG_SERVICE_KEY}
+        COG_SERVICE_REGION: ${COG_SERVICE_REGION}
     tty: true
     volumes:
       - ./app:/root/app
