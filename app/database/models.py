@@ -22,6 +22,11 @@ class Wordbook(models.Model):
     category = models.CharField(max_length=50,blank=True, null=True,verbose_name='品詞')
     context = models.TextField(blank=True, null=True,verbose_name='文脈')
 
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['user_id', 'word'], name='unique_user_word')
+        ]
+
     def __str__(self):
         return f"{self.word} ({self.pronunciation}) -  [{self.category}] {self.meaning}"
     
@@ -36,6 +41,11 @@ class Chat(models.Model):
     user_id = models.ForeignKey(Users, on_delete=models.CASCADE,verbose_name='ユーザーID')
     time = models.DateTimeField(primary_key=True,verbose_name='日時')
     contents = models.TextField(verbose_name='会話内容')
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['user_id', 'time'], name='unique_user_time')
+        ]
 
     def __str__(self):
         return f"{self.user_id.username} ({self.time}) - {self.contents}"
