@@ -42,20 +42,32 @@ class error:
         self.sentence = match.sentence
         self.start = match.offset
         self.end = self.start + match.errorLength
-        self.message = GoogleTranslator(source='auto',target='ja').translate(match.message)
+        # self.message = GoogleTranslator(source='auto',target='ja').translate(match.message)
         self.suggestion = match.sentence[:self.start] + match.replacements[0] + match.sentence[self.end:]
 
-        # # カッコ内は除外して説明文を和訳 TODO
-        # if match.message.find('“') == -1:
-        #     self.message = GoogleTranslator(source='auto',target='ja').translate(match.message)
-        # else:
-        #     d_start = match.message.find('“') + 1
-        #     d_end = match.message.find('”')
-        #     trans = GoogleTranslator(source='auto',target='ja').translate(match.message[:d_start] + 'x' + match.message[d_end:])
-        #     print(trans)
-        #     b_start = trans.find('「') + 1
-        #     b_end = trans.find('」')
-        #     self.message = trans[:b_start] + match.message[d_start:d_end] + trans[b_end:]
+        # カッコ内の英単語がそのままになるようにメッセージを翻訳
+        bra_pos = list(re.compile(r'\“.*?\”|\‘.*?\’').finditer(match.message))
+        
+        if len(bra_pos) == 0:
+            self.message = GoogleTranslator(source='auto',target='ja').translate(match.message)
+        else:
+            # XXXで置き換え
+            tmp_m = ""
+            start = 0
+            for i, pos in enumerate(bra_pos):
+                tmp_m += match.message[start:pos.start()] + "\"XXX" + str(i) + "\""
+                start = pos.end()
+            tmp_m += match.message[start:]
+
+            # 翻訳
+            trans = GoogleTranslator(source='auto',target='ja').translate(tmp_m)
+
+            # 元の単語に置き換える
+            for i, pos in enumerate(bra_pos):
+                trans = trans.replace("XXX" + str(i), match.message[pos.start()+1:pos.end()-1])
+                print(trans)
+            
+            self.message = trans
 
     def to_html(self):
         html = '<div>'
@@ -66,7 +78,6 @@ class error:
         html += '<p>fixed : ' + self.suggestion + '</p>'
         html += '</div>'
         return html
-
     
     def to_json(self):
         dic = dict({
@@ -89,9 +100,6 @@ def evaluationpage(request):
     # 0.3以下 -> Excellent
     score = len(errors) / len(sentances)
 
-    # html = "error num : " + str(len(errors)) + " sentances : " + str(len(sentances))
-    # html = 'Evaluation : ' + 'Excellent' if score < 0.3 else 'Good' if score < 0.5 else 'Poor'
-    # html += ' (Score : ' + str(score) + ')'
     errors_json = []
     for e in errors:
 
