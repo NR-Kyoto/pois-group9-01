@@ -62,9 +62,6 @@ class error:
                 start = pos.end()
             tmp_m += match.message[start:]
 
-            print(match.message)
-            print(tmp_m)
-
             # 翻訳
             trans = GoogleTranslator(source='auto',target='ja').translate(tmp_m)
 
@@ -99,11 +96,8 @@ def evaluationpage(request):
     sentances = split_sentances(texts)
     errors = check_grammar(sentances)
 
-    # 文法のスコア（仮）：エラー数/文章数
-    # 1以上 -> Poor
-    # 0.5以上 -> Good
-    # 0.3以下 -> Excellent
-    score = len(errors) / len(sentances)
+    # 文法のスコア　0~5点
+    score = get_grammar_score(len(sentances), errors)
 
     # errors_json = []
     # for e in errors:
@@ -149,6 +143,12 @@ def check_grammar(sentances):
     tool.close()
 
     return errors
+
+# 文法のスコアを返す
+# 文法的間違えのなかった文の数 / 全文数 * 5
+def get_grammar_score(sentance_num, errors):
+    err_setnace_num = len(set([e.index for e in errors]))
+    return (sentance_num - err_setnace_num) / sentance_num * 5
 
 # 重複して登場するエラーの種類をランキング
 def grammar_weak_ranking(errors):
