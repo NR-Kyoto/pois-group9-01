@@ -10,16 +10,13 @@ ENV LC_ALL ja_JP.UTF-8
 ENV TZ JST-9
 ENV TERM xterm
 
+COPY requirements.txt /root/
+
 RUN apt-get install -y fonts-noto-cjk
 
 RUN apt-get install -y vim less
 RUN pip install --upgrade pip
 RUN pip install --upgrade setuptools
 
-RUN pip install django==3.2
-RUN pip install openai
-RUN pip install language-tool-python
-RUN pip install deep-translator
+RUN pip install -r /root/requirements.txt
 
-
-RUN apt-get install -y default-jre
