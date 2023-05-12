@@ -7,6 +7,7 @@ import language_tool_python # 文法チェック
 
 import re # 正規表現
 import json # ResponseをJsonで
+import collections
 
 check_categories = ['CONFUSED_WORDS', 'GRAMMAR', 'REPETITIONS', 'TYPOS']
 
@@ -30,16 +31,18 @@ texts = [
 @dataclass(init=False)
 class error:
 
-    index: int # 対象文の番号
-    sentence: str
-    start: int # 文内での開始位置
-    end: int # 文内での終了位置
-    message: str # エラーメッセージ
+    index: int      # 対象文の番号
+    sentence: str   # 元の文
+    errtype: str    # ruleId
+    start: int      # 文内での開始位置
+    end: int        # 文内での終了位置
+    message: str    # エラーメッセージ
     suggestion: str # 正しい文
 
     def __init__(self, index, match):
         self.index = index
         self.sentence = match.sentence
+        self.errtype = match.ruleId
         self.start = match.offset
         self.end = self.start + match.errorLength
         # self.message = GoogleTranslator(source='auto',target='ja').translate(match.message)
@@ -59,13 +62,15 @@ class error:
                 start = pos.end()
             tmp_m += match.message[start:]
 
+            print(match.message)
+            print(tmp_m)
+
             # 翻訳
             trans = GoogleTranslator(source='auto',target='ja').translate(tmp_m)
 
             # 元の単語に置き換える
             for i, pos in enumerate(bra_pos):
                 trans = trans.replace("XXX" + str(i), match.message[pos.start()+1:pos.end()-1])
-                print(trans)
             
             self.message = trans
 
@@ -92,7 +97,7 @@ class error:
 def evaluationpage(request):
 
     sentances = split_sentances(texts)
-    errors = evaluate_grammar(sentances)
+    errors = check_grammar(sentances)
 
     # 文法のスコア（仮）：エラー数/文章数
     # 1以上 -> Poor
@@ -100,15 +105,16 @@ def evaluationpage(request):
     # 0.3以下 -> Excellent
     score = len(errors) / len(sentances)
 
-    errors_json = []
-    for e in errors:
+    # errors_json = []
+    # for e in errors:
 
-        # html += e.to_html()
-        errors_json.append(e.to_json())
+    #     # html += e.to_html()
+    #     errors_json.append(e.to_json())
 
     data = {
         "score" : score,
-        "errors" : errors_json
+        "weaks" : grammar_weak_ranking(errors),
+        # "errors" : errors_json
     }
 
     # return HttpResponse(html)
@@ -127,7 +133,7 @@ def split_sentances(texts):
     return sentances
 
 # sentances : 発話した文のリスト
-def evaluate_grammar(sentances):
+def check_grammar(sentances):
 
     tool = language_tool_python.LanguageTool('en-US')
     
@@ -135,7 +141,6 @@ def evaluate_grammar(sentances):
     for i, s in enumerate(sentances):
         # 文法をチェック
         matches = tool.check(s)
-        correct = tool.correct(s)
 
         # 定められたカテゴリに合うものだけを記録
         errors += [error(i, match)
@@ -144,3 +149,20 @@ def evaluate_grammar(sentances):
     tool.close()
 
     return errors
+
+# 重複して登場するエラーの種類をランキング
+def grammar_weak_ranking(errors):
+    etypes = [e.errtype for e in errors]
+    c = collections.Counter(etypes)
+
+    # 辞書（Json形式）にする
+    dicl = []
+    for p in c.most_common(3):
+        dicl.append(dict({
+                "type" : p[0],
+                "count" : p[1],
+                "message" : [e.to_json() for e in errors if e.errtype == p[0]][:3] # 3個まで例を表示
+            }))
+
+    # 出現回数上位三つを表示
+    return dicl
