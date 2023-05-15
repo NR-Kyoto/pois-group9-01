@@ -1,0 +1,30 @@
+{% extends 'register/base.html' %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <title>新規登録ページ</title>
+    <link rel="stylesheet" href="{% static 'register/style.css' %}">
+</head>
+
+<body>
+    {% block content %}
+    <form method="post" class="register-form">
+        {% csrf_token %}
+        <label for="{{ form.user_id.id_for_label }}">ユーザID:</label>
+        {{ form.user_id }}
+        <br>
+        <label for="{{ form.username.id_for_label }}">ユーザ名:</label>
+        {{ form.username }}
+        <br>
+        <label for="{{ form.password.id_for_label }}">パスワード:</label>
+        {{ form.password }}
+        <br>
+        <button type="submit" value="ログイン">新規登録</button>
+    </form>
+    {% endblock %}
+</body>
+
+</html>

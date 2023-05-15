@@ -22,6 +22,7 @@ urlpatterns = [
     path('home/', include('home.urls')),
     path('chat/', include('chat.urls')),
     path('login/', include('login.urls')),
+    path('register/', include('register.urls')),
     path('evaluation/', include('evaluation.urls')),
     path('vocab/', include('vocab.urls')),
     path('', RedirectView.as_view(url='home/'))

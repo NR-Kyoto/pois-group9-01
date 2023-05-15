@@ -1,0 +1,14 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>{% block title %}Register{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'register/style.css' %}">
+</head>
+
+<body>
+    {% block content %}{csrf_token %}{% endblock %}
+</body>
+
+</html>
