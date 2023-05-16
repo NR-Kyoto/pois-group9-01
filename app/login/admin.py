@@ -1,3 +1,6 @@
 from django.contrib import admin
+from login.models import User
+from vocab.models import Wordbook
 
-# Register your models here.
+admin.site.register(User)
+admin.site.register(Wordbook)
