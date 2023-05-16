@@ -1,6 +1,88 @@
+<!DOCTYPE html>
+<html lang="ja">
 
-{% load static %}
-<link rel="stylesheet" type="text/css" href="{% static 'chat/style.css' %}">
-<h1>
-    This is the chat index page!
-</h1>
+    <head>
+        <title>Chat_page</title>
+        {% load static %}
+        <link rel="stylesheet" type="text/css" href="{% static 'chat/style.css' %}">
+        <script type="text/javascript" src="{% static 'chat/script.js' %}"></script>
+    </head>
+    <body>
+        <header>
+            <h1>English Bot 2000</h1>
+        </header>
+        <main>
+            <h2>
+                This is the chat index page!
+            </h2>
+            <div class="chat_area">
+                <div class="entry entry_assistant">
+                    <div>
+                        <img src="https://ja.wikipedia.org/wiki/ChatGPT#/media/%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB:ChatGPT_logo.svg" alt="ChatGPT_logo">
+                    </div>
+                    <div class="speaker speaker_assistant">
+                        AI大臣
+                    </div>
+                    <div class="lines">
+                        コメント1(AI)
+                    </div>
+                </div>
+
+                <div class="entry entry_user">
+                    <div>
+                        <img src="https://res.cloudinary.com/crunchbase-production/image/upload/c_thumb,h_170,w_170,f_auto,g_faces,z_0.7,b_white,q_auto:eco,dpr_1/eifaoe14zqiueje28oo9" alt="user_face">
+                    </div>  
+                    <div class="speaker speaker_user">
+                        ユーザ様
+                    </div>
+                    <div class="lines">
+                        コメント2(ユーザ)
+                    </div>
+                </div>
+
+                <div class="entry entry_assistant">
+                    <div>
+                        <img src="https://ja.wikipedia.org/wiki/ChatGPT#/media/%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB:ChatGPT_logo.svg" alt="ChatGPT_logo">
+                    </div>
+                    <div class="speaker speaker_assistant">
+                        AI大臣
+                    </div>
+                    <div class="lines">
+                        コメント3(AI)
+                    </div>
+                </div>
+
+                <div class="entry entry_user">
+                    <div>
+                        <img src="https://res.cloudinary.com/crunchbase-production/image/upload/c_thumb,h_170,w_170,f_auto,g_faces,z_0.7,b_white,q_auto:eco,dpr_1/eifaoe14zqiueje28oo9" alt="user_face">
+                    </div>
+                    <div class="speaker speaker_user">
+                        ユーザー様
+                    </div>
+                    <div class="lines">
+                        コメント4(ユーザ)
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <form id="form1" method="post">
+                    {% csrf_token %}
+                    <!--text input-->
+                    <input type="text" id="text_input" name="text_input" value="話して">
+                    <!--mic activation button-->
+                    <button type="button" id="mic_button" name="mic_button">マイク</button>
+                    <!--submit button-->
+                    <button type="button" id="submit_button" name="submit_button" >送信</button>
+                </form>
+            </div>
+
+        </main>
+        <footer>
+            <p>Footer</p>
+        </footer>
+        
+
+    </body>
+
+</html>

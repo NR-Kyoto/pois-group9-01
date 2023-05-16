@@ -8,4 +8,5 @@ urlpatterns = [
 
     #for development below, remove before launch
     path('mock/', views.mock, name='mock'),
+    path('mock_post/', views.mock_post, name='mock_post'),
 ]
