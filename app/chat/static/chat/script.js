@@ -64,11 +64,122 @@ document.addEventListener('DOMContentLoaded', function(){
         //console.log("form submitted");
 
     });
+    
+    const mic_button = document.querySelector("#mic_button");
+    
+    
+    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+        console.log('getUserMedia supported.');
+        navigator.mediaDevices
+            .getUserMedia (
+                // constraints - only audio needed for this app
+                {
+                    audio: true
+                }
+            )
+            .then(function(stream) {
+                const mediaRecorder = new MediaRecorder(stream);
+                let isRecording = false;
+                mic_button.onclick = function() {
+                    if(isRecording){
+                        mediaRecorder.stop();
+                        console.log(mediaRecorder.state);
+                        console.log("recorder stopped");
+                        mic_button.style.background = "";
+                        mic_button.style.color = "";
+                        isRecording = false;
+                    } else {
+                        mediaRecorder.start();
+                        console.log(mediaRecorder.state);
+                        console.log("recorder started");
+                        mic_button.style.background = "red";
+                        mic_button.style.color = "black";
+                        isRecording = true;
+                    }
+                };
+
+                let audioChunks = [];
+
+                mediaRecorder.ondataavailable = function(e) {
+                    audioChunks.push(e.data);
+                };
+
+                
+                mediaRecorder.addEventListener("stop", () => {
+                    const audioBlob = new Blob(audioChunks, {type: 'audio/wav'});
+                    const reader = new FileReader();
+                    //audioFile = new File([audioBlob], "audio.wav", {type: 'audio/wav'});
+                    reader.readAsDataURL(audioBlob)
+                    reader.onload = () => {
+                        audio64 = (reader.result).split(",")[1];
+                        console.log(audio64);
+                        audioChunks = [];
+                        sendAudioFile(audio64);
+                    }
+                    
+
+                    //const audioUrl = URL.createObjectURL(audioBlob);
+                    
+
+                    /*to download audio file
+                    const a = document.createElement("a");
+                    document.body.appendChild(a);
+                    a.style = "display: none";
+                    a.download = "audio.wav";
+                    a.href = audioUrl;
+                    a.click();
+                    document.body.removeChild(a);
+                    delete a;
+                    */
+
+                    //to play audio
+                    //const audio = new Audio(audioUrl);
+                    //audio.play();
+                });
+
+                setTimeout(() => {
+                    mediaRecorder.stop();
+                    console.log(mediaRecorder.state);
+                    console.log("recorder stopped");
+                }, 3000);
+            })
+            .catch(function(err) {
+                console.log('The following getUserMedia error occured: ' + err);
+            });
+    } else {
+        console.log('getUserMedia not supported on your browser!');
+    }
+
+    function sendAudioFile(audio64){
+        const form_data = new FormData();
+        //form_data.append("audio", audioFile);
+        form_data.append("audio", audio64);
+
+
+        const request = new Request(
+            "/chat/mock_post_audio/",
+            {headers: {'X-CSRFToken': csrftoken},            
+            }
+        );
+
+        fetch(request, {
+            method: 'POST',
+            mode: 'same-origin',
+            body: form_data,
+        }).then(function(response){
+            response.json().then(function(data){
+                console.log(data);
+                const audio_base64 = data["audio"];
+                const audio = new Audio("data:audio/wav;base64," + audio_base64);
+                audio.play();
+            });
+        });
+    }
 
     //notice for the mic_button is clicked
-    const mic_button = document.querySelector("#mic_button");
     mic_button.addEventListener("click", () => {
         console.log("mic_button clicked");
+        
     });
  });
 
