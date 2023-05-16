@@ -20,9 +20,7 @@ def add_word(request):
         # データがフォームに一致するかチェック
         if form.is_valid():
             form.save()
-            p = redirect('/vocab')
-            print(p)
-            return p
+            return redirect('/vocab')
 
     else:
         # 単語帳のフォームを組み込んだページをレンダリング
@@ -30,6 +28,17 @@ def add_word(request):
         return render(request, 'vocab/add_word.html', {'form': form})
 
 # 単語削除
+def delete_word(request):
+
+    try:
+        word = Wordbook.objects.get(user_id=1, word='dog')
+        word.delete()
+
+        return redirect('/vocab')
+
+    except Wordbook.DoesNotExist:
+        print("404")
+        return redirect('/vocab')
 
 # 編集
 
