@@ -1,5 +1,6 @@
 ###### Requirements without Version Specifiers ######`
 openai
+SpeechRecognition
 
 ###### Requirements with Version Specifiers ######`
 django==3.2

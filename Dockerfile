@@ -15,6 +15,7 @@ COPY requirements.txt /root/
 RUN apt-get install -y fonts-noto-cjk
 
 RUN apt-get install -y vim less
+RUN apt-get install flac
 RUN pip install --upgrade pip
 RUN pip install --upgrade setuptools
 
