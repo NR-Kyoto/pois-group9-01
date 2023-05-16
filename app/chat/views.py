@@ -13,24 +13,22 @@ def chatpage(request):
 def start_chat():
     prompt = "Please chat with me in super-easy English little by little. I am a foreigner. I am alone. I understand little English. Please talk to me like I'm a three-year-old. I only understand one sentence at a time. Please start a chat with me."
 
-    return generate_text(prompt)
+    message_list = [{"role": "system", "content": prompt}]
+
+    return generate_text(message_list)
 
 #chatgptにアクセスするための関数
-def generate_text(prompt):
+def generate_text(message_list):
 
     try:
-        response = openai.Completion.create(
-            engine=model_engine,
-            prompt=prompt,
-            max_tokens=1024,
-            n=1,
-            stop=None,
-            temperature=0.7,
+        response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",
+            messages=message_list
         )
     except Exception as e:
         print(e)
         return "AI is currently unavailable"
 
-    message = response.choices[0].text.strip()
-    return message
+    chat_message = [response["choices"][0]["message"]]
+    return chat_message
 
