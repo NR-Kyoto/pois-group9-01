@@ -1,6 +1,7 @@
 ###### Requirements without Version Specifiers ######`
 openai
 SpeechRecognition
+gTTS
 
 ###### Requirements with Version Specifiers ######`
 django==3.2
