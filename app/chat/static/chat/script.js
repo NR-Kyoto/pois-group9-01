@@ -106,13 +106,12 @@ document.addEventListener('DOMContentLoaded', function(){
 
                 
                 mediaRecorder.addEventListener("stop", () => {
-                    const audioBlob = new Blob(audioChunks, {type: 'audio/wav'});
+                    const audioBlob = new Blob(audioChunks, {type: 'audio/webm; codecs=opus'});
                     const reader = new FileReader();
                     //audioFile = new File([audioBlob], "audio.wav", {type: 'audio/wav'});
                     reader.readAsDataURL(audioBlob)
                     reader.onload = () => {
                         audio64 = (reader.result).split(",")[1];
-                        console.log(audio64);
                         audioChunks = [];
                         sendAudioFile(audio64);
                     }
@@ -168,9 +167,9 @@ document.addEventListener('DOMContentLoaded', function(){
             body: form_data,
         }).then(function(response){
             response.json().then(function(data){
-                console.log(data);
+                console.log(data)
                 const audio_base64 = data["audio"];
-                const audio = new Audio("data:audio/wav;base64," + audio_base64);
+                const audio = new Audio("data:audio/webm; codecs=opus;base64," + audio_base64);
                 audio.play();
             });
         });
