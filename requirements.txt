@@ -1,5 +1,7 @@
 ###### Requirements without Version Specifiers ######`
 openai
 
+beautifulsoup4 # スクレイピング用
+
 ###### Requirements with Version Specifiers ######`
 django==3.2
