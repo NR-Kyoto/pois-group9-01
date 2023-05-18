@@ -2,13 +2,12 @@ from django.shortcuts import render, redirect
 from django.core import serializers
 from django.http import HttpResponse
 
-from urllib.parse import urlencode
-
 from .models import Wordbook
 from .forms import WordForm
 from login.models import User
 
-from bs4 import BeautifulSoup # スクレイピング用
+# スクレイピング用
+from bs4 import BeautifulSoup 
 import requests
 import re
 
@@ -16,25 +15,7 @@ weblio_url='https://ejje.weblio.jp/content/'
 
 def vocabpage(request):
     
-    if request.GET.get('w') != None:
-        dic = search_word(request.GET['w'])
-        dic['user_id'] = User.objects.all()[0]
-        form = Wordbook(**dic)
-        
-        # データがフォームに一致するかチェック
-        # if form.is_valid():
-        form.save()
-        return redirect('/vocab')
-
-    posts = Wordbook.objects.all()
-    post_list = serializers.serialize('json', posts)
-
-    return HttpResponse(post_list, content_type="application/json; charset=utf-8")
-
-# 単語追加
-def add_word(request):
-
-    # requestがPostならデータベースに追加
+    # Postで追加
     if request.method == "POST":
         form = WordForm(request.POST)
 
@@ -43,25 +24,52 @@ def add_word(request):
             form.save()
             return redirect('/vocab')
 
-    else:
+    # 追加（検索）
+    elif request.GET.get('w') != None:
+        dic = search_word(request.GET['w'])
+        form = Wordbook(**dic)
+        
+        form.save()
+        return redirect('/vocab')
+
+    # 編集
+    # TODO wordを編集する場合は元のデータを削除
+    elif request.GET.get('u') != None:
+        word = request.GET['u']
+        
+        try:
+            obj = Wordbook.objects.get(user_id=User.objects.all()[0], word=word)
+            obj.context = "updated"
+            obj.save()
+        
+        except Wordbook.DoesNotExist:
+            print("no such vocabulary")
+            return redirect('/vocab')
+
+    # 削除
+    elif request.GET.get('d') != None:
+        word = request.GET['d']
+
+        try:
+            obj = Wordbook.objects.get(user_id=User.objects.all()[0], word=word)
+            obj.delete()
+        
+        except Wordbook.DoesNotExist:
+            print("no such vocabulary")
+            return redirect('/vocab')
+
+    elif request.GET.get('a') != None:
+        
         # 単語帳のフォームを組み込んだページをレンダリング
-        form = WordForm()
+        dic = search_word(request.GET['a'])
+        form = WordForm(dic)
+
         return render(request, 'vocab/add_word.html', {'form': form})
 
-# 単語削除
-def delete_word(request):
+    posts = Wordbook.objects.all()
+    post_list = serializers.serialize('json', posts, indent=2)
 
-    try:
-        word = Wordbook.objects.get(user_id=1, word='dog')
-        word.delete()
-
-        return redirect('/vocab')
-
-    except Wordbook.DoesNotExist:
-        print("404")
-        return redirect('/vocab')
-
-# 編集
+    return HttpResponse(post_list, content_type="application/json; charset=utf-8")
 
 # 英単語からの自動入力
 # weblioをスクレイピング
@@ -94,11 +102,11 @@ def search_word(word):
     example = soup.find(class_='KejjeYrEn').get_text() if soup.find(class_='KejjeYrEn') else ''
 
     return {
-            "user_id": None,
+            "user_id": User.objects.all()[0], # TODO
             "word": word,
             "meaning": japanese,
             "pronunciation": pronunciation,
             "category": partofspeech,
-            "pronunciation": example,
+            "context": example,
         }
         
