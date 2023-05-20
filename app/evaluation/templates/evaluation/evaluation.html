@@ -1,0 +1,80 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Evaluation Page</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'evaluation/style.css' %}">
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var sentences = document.getElementsByClassName("fixed-sentence");
+
+            for (var i = 0; i < sentences.length; i++) {
+                var sentence = sentences[i];
+                var originalSentence = sentence.previousElementSibling;
+
+                var originalWords = originalSentence.textContent.trim().split(" ");
+                var fixedWords = sentence.textContent.trim().split(" ");
+
+                sentence.innerHTML = ""; // オリジナルの文を削除
+
+                for (var j = 0; j < fixedWords.length; j++) {
+                    var word = fixedWords[j];
+                    var originalWord = originalWords[j];
+
+                    var wordSpan = document.createElement("span");
+
+                    if (word !== originalWord) {
+                        wordSpan.classList.add("highlight");
+                    }
+
+                    wordSpan.textContent = word + " ";
+                    sentence.appendChild(wordSpan);
+                }
+            }
+        });
+    </script>
+</head>
+
+<body>
+    <div class="score">
+        <h1>会話の総評:</h1>
+        {% if total_score <= 4 %} <p class="score-text">Poor がんばろう！</p>
+            {% elif total_score <= 8 %} <p class="score-text">Good 上手だね！</p>
+                {% else %}
+                <p class="score-text">Excellent 最高！</p>
+                {% endif %}
+    </div>
+
+    <div class="score">
+        <p>文法の評価:</p>
+        {% if score <= 2 %} <p class="score-text">Poor がんばろう！</p>
+            {% elif score <= 4 %} <p class="score-text">Good 上手だね！</p>
+                {% else %}
+                <p class="score-text">Excellent 最高！</p>
+                {% endif %}
+    </div>
+
+    <div class="weaknesses">
+        <p>あなたの弱点:</p>
+        {% for weakness in weaks %}
+        {% for example in weakness.message|slice:":1" %}
+        <div class="example">
+            <p class="sentence">間違えた箇所: {{ example.sentence }}</p>
+            <p class="fixed-sentence">修正後: {{ example.fixed_sentence }}</p>
+        </div>
+        {% endfor %}
+        {% endfor %}
+    </div>
+    
+    <div class="score">
+        <p>音声の評価:</p>
+        {% if result_json.pronunciation_score <= 2 %} <p class="score-text">Poor がんばろう！</p>
+            {% elif result_json.pronunciation_score <= 4 %} <p class="score-text">Good 上手だね！</p>
+                {% else %}
+                <p class="score-text">Excellent 最高！</p>
+                {% endif %}
+    </div>
+</body>
+</html>
