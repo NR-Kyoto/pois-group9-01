@@ -15,23 +15,30 @@ import re
 weblio_url='https://ejje.weblio.jp/content/'
 
 def vocabpage(request):
-    if request.method == 'POST':
-        form = WordbookForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('vocabpage')
-    else:
-        form = WordbookForm()
+
+    # if request.method == 'POST':
+    #     form = WordbookForm(request.POST)
+    #     if form.is_valid():
+    #         form.save()
+    #         return redirect('vocabpage')
+    # else:
+    #     form = WordbookForm()
+    form = WordbookForm()
     
     search_query = request.GET.get('search_query', '')
+
+    # 検索にかかる単語を返す
     wordbook_data = Wordbook.objects.filter(
         Q(word__icontains=search_query) | Q(meaning__icontains=search_query)
     ).order_by('word') 
 
     context = {'wordbook_data': wordbook_data, 'form': form}
+
     return render(request, 'vocab/vocab.html', context)
 
 def add_word(request):
+
+    # Saveボタンが押されたら，追加して単語帳ページにリダイレクト
     if request.method == 'POST':
         form = WordbookForm(request.POST)
         if form.is_valid():
@@ -39,10 +46,16 @@ def add_word(request):
             return redirect('vocabpage')
     else:
         form = WordbookForm()
+
     return render(request, 'vocab/add_word.html', {'form': form})
 
 def edit_word(request, user_id_id, word):
+#     # TODO wordを編集する場合は元のデータを削除
+
+    # 該当データを取得
     word = get_object_or_404(Wordbook, user_id_id=user_id_id, word=word)
+
+    # Saveボタンが押されたら，編集して単語帳ページにリダイレクト
     if request.method == 'POST':
         form = WordbookForm(request.POST, instance=word)
         if form.is_valid():
@@ -50,14 +63,20 @@ def edit_word(request, user_id_id, word):
             return redirect('vocabpage')
     else:
         form = WordbookForm(instance=word)
+
     return render(request, 'vocab/edit_word.html', {'form': form, 'user_id_id': user_id_id, 'word': word})
 
 
 def delete_word(request, user_id_id, word):
+
+    # 該当データを取得
     word = get_object_or_404(Wordbook, user_id_id=user_id_id, word=word)
+
+    # deleteボタンが押されたら，削除して単語帳ページにリダイレクト
     if request.method == 'POST':
         word.delete()
         return redirect('vocabpage')
+
     return render(request, 'vocab/delete_word.html', {'word': word})
 
 
@@ -99,61 +118,3 @@ def search_word(word):
             "category": partofspeech,
             "context": example,
         }
-
-# def vocabpage(request):
-    
-#     # Postで追加
-#     if request.method == "POST":
-#         form = WordForm(request.POST)
-
-#         # データがフォームに一致するかチェック
-#         if form.is_valid():
-#             form.save()
-#             return redirect('/vocab')
-
-#     # 追加（検索）
-#     elif request.GET.get('w') != None:
-#         dic = search_word(request.GET['w'])
-#         form = Wordbook(**dic)
-        
-#         form.save()
-#         return redirect('/vocab')
-
-#     # 編集
-#     # TODO wordを編集する場合は元のデータを削除
-#     elif request.GET.get('u') != None:
-#         word = request.GET['u']
-        
-#         try:
-#             obj = Wordbook.objects.get(user_id=User.objects.all()[0], word=word)
-#             obj.context = "updated"
-#             obj.save()
-        
-#         except Wordbook.DoesNotExist:
-#             print("no such vocabulary")
-#             return redirect('/vocab')
-
-#     # 削除
-#     elif request.GET.get('d') != None:
-#         word = request.GET['d']
-
-#         try:
-#             obj = Wordbook.objects.get(user_id=User.objects.all()[0], word=word)
-#             obj.delete()
-        
-#         except Wordbook.DoesNotExist:
-#             print("no such vocabulary")
-#             return redirect('/vocab')
-
-#     elif request.GET.get('a') != None:
-        
-#         # 単語帳のフォームを組み込んだページをレンダリング
-#         dic = search_word(request.GET['a'])
-#         form = WordForm(dic)
-
-#         return render(request, 'vocab/add_word.html', {'form': form})
-
-#     posts = Wordbook.objects.all()
-#     post_list = serializers.serialize('json', posts, indent=2)
-
-#     return HttpResponse(post_list, content_type="application/json; charset=utf-8")
