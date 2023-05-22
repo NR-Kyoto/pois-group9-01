@@ -1,5 +1,6 @@
 console.log("loaded");
 
+//get csrf token
 function getCookie(name){
     let cookieValue = null;
     if (document.cookie && document.cookie !== ''){
@@ -17,16 +18,18 @@ function getCookie(name){
 
 const csrftoken = getCookie('csrftoken');
 
+//load functions after DOM is loaded
 document.addEventListener('DOMContentLoaded', function(){
+
     //create JSON of chat history
     const chat_history_entries = document.querySelector(".chat_area").querySelectorAll(".entry");
     //for each entry, get .speaker and .lines
     let chat_history_list = [];
     chat_history_entries.forEach(entry => {
         const speaker = entry.querySelector(".speaker");
-        const speaker_name = speaker.innerHTML;
+        const speaker_name = speaker.innerHTML.trim();
         const isAssistant = speaker.classList.contains('speaker_assistant');
-        const lines = entry.querySelector(".lines").textContent;
+        const lines = entry.querySelector(".lines").textContent.trim();
         chat_history_list.push({
             "speaker": speaker_name,
             "isAssistant": isAssistant,
@@ -34,10 +37,12 @@ document.addEventListener('DOMContentLoaded', function(){
         });
     });
 
-    //read form, write on console
+
+    /**read form, write on console*/
     const submit_button = document.querySelector("#submit_button");
     const form = document.querySelector("#form1");
-    submit_button.addEventListener("click", () => {
+    submit_button.addEventListener("click", (e) => {
+        e.preventDefault();
         console.log(form);
         let form_data = new FormData(form);
         form_data.append("chat_history", JSON.stringify(chat_history_list));
@@ -64,9 +69,9 @@ document.addEventListener('DOMContentLoaded', function(){
         //console.log("form submitted");
 
     });
-    
+
+    // get mic input
     const mic_button = document.querySelector("#mic_button");
-    
     
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
         console.log('getUserMedia supported.');
@@ -80,7 +85,8 @@ document.addEventListener('DOMContentLoaded', function(){
             .then(function(stream) {
                 const mediaRecorder = new MediaRecorder(stream);
                 let isRecording = false;
-                mic_button.onclick = function() {
+                mic_button.onclick = function(e) {
+                    e.preventDefault();
                     if(isRecording){
                         mediaRecorder.stop();
                         console.log(mediaRecorder.state);
@@ -95,6 +101,14 @@ document.addEventListener('DOMContentLoaded', function(){
                         mic_button.style.background = "red";
                         mic_button.style.color = "black";
                         isRecording = true;
+                        setTimeout(() => {
+                            mediaRecorder.stop();
+                            console.log(mediaRecorder.state);
+                            console.log("recorder stopped");
+                            mic_button.style.background = "";
+                            mic_button.style.color = "";
+                            isRecording = false;
+                        }, 60000);
                     }
                 };
 
@@ -105,7 +119,8 @@ document.addEventListener('DOMContentLoaded', function(){
                 };
 
                 
-                mediaRecorder.addEventListener("stop", () => {
+                mediaRecorder.addEventListener("stop", (e) => {
+                    e.preventDefault();
                     const audioBlob = new Blob(audioChunks, {type: 'audio/webm; codecs=opus'});
                     const reader = new FileReader();
                     //audioFile = new File([audioBlob], "audio.wav", {type: 'audio/wav'});
@@ -136,11 +151,6 @@ document.addEventListener('DOMContentLoaded', function(){
                     //audio.play();
                 });
 
-                setTimeout(() => {
-                    mediaRecorder.stop();
-                    console.log(mediaRecorder.state);
-                    console.log("recorder stopped");
-                }, 3000);
             })
             .catch(function(err) {
                 console.log('The following getUserMedia error occured: ' + err);
@@ -149,6 +159,7 @@ document.addEventListener('DOMContentLoaded', function(){
         console.log('getUserMedia not supported on your browser!');
     }
 
+    //send audio file to server
     function sendAudioFile(audio64){
         const form_data = new FormData();
         //form_data.append("audio", audioFile);
@@ -157,7 +168,7 @@ document.addEventListener('DOMContentLoaded', function(){
 
         const request = new Request(
             "/chat/mock_post_audio/",
-            {headers: {'X-CSRFToken': csrftoken},            
+            {headers: {'X-CSRFToken': csrftoken},
             }
         );
 
@@ -176,9 +187,50 @@ document.addEventListener('DOMContentLoaded', function(){
     }
 
     //notice for the mic_button is clicked
-    mic_button.addEventListener("click", () => {
+    mic_button.addEventListener("click", (e) => {
+        e.preventDefault();
         console.log("mic_button clicked");
-        
     });
+
+
+    //detect selected text
+    const chat_area = document.querySelector(".chat_area");
+    chat_area.addEventListener("mouseup", () => {
+        const selected_DOM = window.getSelection();
+        if(!selected_DOM.isCollapsed){
+            if(selected_DOM.anchorNode.parentElement.classList.contains("lines")
+                && selected_DOM.anchorNode === selected_DOM.focusNode){
+                    text = selected_DOM.toString();
+                    context = selected_DOM.anchorNode.parentElement.textContent.trim();
+                    console.log("selected text: " + text);
+                    console.log("context :" + context);
+                    sendSelected(text, context)
+            } 
+        }
+    });
+
+    //send word to server
+    function sendSelected(text, context){
+        const form_data = new FormData();
+        const selected_JSON = JSON.stringify({"text": text, "context": context});
+        form_data.append("selected", selected_JSON); 
+
+        const request = new Request(
+            "/chat/mock_post_selected/",
+            {headers: {'X-CSRFToken': csrftoken},
+            }
+        );
+
+        fetch(request, {
+            method: 'POST',
+            mode: 'same-origin',
+            body: form_data,
+        }).then(function(response){
+            response.json().then(function(data){
+                console.log(data);
+            });
+        });
+    }
+
  });
 

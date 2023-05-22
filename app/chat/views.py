@@ -65,3 +65,18 @@ def mock_post_audio(request):
         print("audio text : " + text)
 
     return JsonResponse({"text": text ,"audio":data})#audio response is not necessarily here
+
+def mock_post_selected(request):
+    if request.method == 'POST':
+        selected = json.loads(request.POST["selected"])
+        text = selected["text"]
+        context = selected["context"]
+
+        #do something with data
+
+        print("selected text : " + text)
+        print("selected context : " + context)
+
+        meanings = "some randome meanings text or json"
+        res = {"text": text, "meanings": meanings}
+        return JsonResponse(res)
