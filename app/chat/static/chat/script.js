@@ -55,7 +55,7 @@ function submit_text_with_chat_history(e,form, chat_history_list){
         body: form_data,
     }).then(function(response){
         response.json().then(function(data){
-            console.log(data);
+            //console.log(data);
             updateEntries(data);
         });
     });
@@ -225,7 +225,10 @@ document.addEventListener('DOMContentLoaded', function(){
                 mediaRecorder.ondataavailable = function(e) {
                     audioChunks.push(e.data);
                 };
-                mediaRecorder.addEventListener("stop", (e) => audio_to_base64(e, audioChunks));
+                mediaRecorder.addEventListener("stop", function(e){
+                    audio_to_base64(e, audioChunks)
+                    audioChunks = [];
+                });
             }).catch(function(err) {
                 console.log('The following getUserMedia error occured: ' + err);
             });
