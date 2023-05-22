@@ -18,6 +18,9 @@ import azure.cognitiveservices.speech as speech_sdk
 
 import os
 
+# 認証情報を外部ファイルから読み出す
+COG_SERVICE_KEY=os.getenv('COG_SERVICE_KEY')
+COG_SERVICE_REGION=os.getenv('COG_SERVICE_REGION')
 
 check_categories = ['CONFUSED_WORDS', 'GRAMMAR', 'REPETITIONS', 'TYPOS']
 
@@ -79,6 +82,7 @@ class error:
             for i, pos in enumerate(bra_pos):
                 trans = trans.replace("XXX" + str(i), match.message[pos.start()+1:pos.end()-1])
             
+            # TODO 全部翻訳するのは時間がかかるので一部に変更
             self.message = trans
 
     def to_html(self):
@@ -107,31 +111,30 @@ def evaluationpage(request):
     errors = check_grammar(sentances)
 
     # 文法のスコア　0~5点
-    score = get_grammar_score(len(sentances), errors)
-
-    # errors_json = []
-    # for e in errors:
-
-    #     # html += e.to_html()
-    #     errors_json.append(e.to_json())
+    grammar_score = get_grammar_score(len(sentances), errors)
 
     # 音声の評価スコア
-    result_json = evaluate_speech('What time is it now in Japan ?')
-    pronunciation_score = result_json["score"]
+    speech_json = evaluate_speech('What time is it now in Japan ?')
+    pronunciation_score = speech_json["score"]
 
     # total_scoreの計算
-    total_score = score + pronunciation_score
+    total_score = grammar_score + pronunciation_score
 
     data = {
-        "score" : score,
-        "weaks" : grammar_weak_ranking(errors),
         "total_score" : total_score,
-        # "errors" : errors_json
+        "grammar" : {
+            "score" : grammar_score,
+            "weaks" : grammar_weak_ranking(errors)
+        },
+        "speech" : {
+            "score" : pronunciation_score,
+            "weaks" : speech_json['words']
+        }
     }
 
     # return HttpResponse(html)
     return render(request, 'evaluation/evaluation.html', data)
-    #return HttpResponse(json.dumps(data, indent=2, ensure_ascii=False), content_type = "application/json; charset=utf-8")
+    # return HttpResponse(json.dumps(data, indent=2, ensure_ascii=False), content_type = "application/json; charset=utf-8")
 
 
 # 1文ずつに分割
@@ -180,28 +183,14 @@ def grammar_weak_ranking(errors):
         dicl.append(dict({
                 "type" : p[0],
                 "count" : p[1],
-                "message" : [e.to_json() for e in errors if e.errtype == p[0]][:3] # 3個まで例を表示
+                "examples" : [e.to_json() for e in errors if e.errtype == p[0]][:3] # 3個まで例を表示
             }))
 
     # 出現回数上位三つを表示
     return dicl
 
 
-# 以下，音声認識の評価
-
-# 認証情報を外部ファイルから読み出す
-
-COG_SERVICE_KEY=os.getenv('COG_SERVICE_KEY')
-COG_SERVICE_REGION=os.getenv('COG_SERVICE_REGION')
-
-def evaluationpage(request):
-    result_json = evaluate_speech('What time is it now in Japan ?')
-
-    context = {
-        'result_json': result_json  # 評価結果をコンテキストに追加
-    }
-
-    return render(request, 'evaluation/evaluation.html', context)
+# 音声認識の評価
 
 # TODO 複数のwavファイルに対応
 def evaluate_speech(script):
@@ -245,7 +234,7 @@ def evaluate_speech(script):
             "accuracy_score": pronunciation_result.accuracy_score, # 発音がどれだけ正しいのか
             "fluency_score": pronunciation_result.fluency_score, # 流暢さ（単語間隔など）
 	        "completeness_score": pronunciation_result.completeness_score,  # 正解文章に対してどれだけちゃんと発音したか＝ぬけがないか
-	        "words": sorted_words[:5]
+	        "words": [sorted_words[i] for i in range(5) if sorted_words[i]['score'] != 5.0]
         })
 
     return dic
