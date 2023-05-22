@@ -78,8 +78,18 @@ class error:
             # 元の単語に置き換える
             for i, pos in enumerate(bra_pos):
                 trans = trans.replace("XXX" + str(i), match.message[pos.start()+1:pos.end()-1])
+            
             self.message = trans
 
+    def to_html(self):
+        html = '<div>'
+        html += '<p>' + self.sentence[:self.start]
+        html += '<strong>' + self.sentence[self.start:self.end] + '</strong>'
+        html += self.sentence[self.end:] + '</p>'
+        html += '<p>' + self.message + '</p>'
+        html += '<p>fixed : ' + self.suggestion + '</p>'
+        html += '</div>'
+        return html
     
     def to_json(self):
         dic = dict({

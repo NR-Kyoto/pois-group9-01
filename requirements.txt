@@ -2,6 +2,8 @@
 openai
 
 azure-cognitiveservices-speech # for evaluate speech
+language-tool-python # 文法評価
+deep-translator
 
 ###### Requirements with Version Specifiers ######`
 django==3.2
