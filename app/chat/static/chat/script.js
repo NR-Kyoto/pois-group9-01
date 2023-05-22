@@ -56,7 +56,7 @@ function submit_text_with_chat_history(e,form, chat_history_list){
     }).then(function(response){
         response.json().then(function(data){
             console.log(data);
-
+            updateEntries(data);
         });
     });
 }
@@ -176,10 +176,23 @@ function sendSelected(text, context){
     });
 }
 
+function addEntry(speaker, lines, isAssistant){
+    const chat_area = document.querySelector(".chat_area");
+    const template_assistant = document.querySelector("#chat_entry_template_assistant");
+    const template_user = document.querySelector("#chat_entry_template_user");
+    const template = isAssistant ? template_assistant : template_user;
+    const clone = template.content.cloneNode(true);
+    clone.querySelector(".speaker").innerHTML = speaker;
+    clone.querySelector(".lines").innerHTML = lines;
+    chat_area.appendChild(clone);
+}
 
-
-
-
+function updateEntries(data){
+    const adding_data = (data["chat"]).slice(data["chat"].length - 2);
+    adding_data.forEach(entry => {
+        addEntry(entry["speaker"], entry["text"], entry["isAssistant"]);
+    });
+}
 
 
 

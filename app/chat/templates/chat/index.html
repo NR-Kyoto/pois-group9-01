@@ -15,6 +15,34 @@
             <h2>
                 This is the chat index page!
             </h2>
+
+            <!-- chat entry template for assistant-->
+            <template id="chat_entry_template_assistant">
+                <div class="entry entry_assistant">
+                    <div>
+                        <img src="{% static 'chat/img/animal_neko.png' %}" alt="assistant_img" class="icon">
+                    </div>
+                    <div class="speaker speaker_assistant">
+                    </div>
+                    <div class="lines">
+                    </div>
+                </div>
+            </template>
+
+            <!-- chat entry template for users -->
+            <template id="chat_entry_template_user">
+                <div class="entry entry_user">
+                    <div>
+                        <img src="{% static 'chat/img/animal_usagi.png' %}" alt="user_img" class="icon">
+                    </div>
+                    <div class="speaker speaker_user">
+                    </div>
+                    <div class="lines">
+                    </div>
+                </div>
+            </template>
+
+            <!-- chat below -->
             <div class="chat_area">
                 <div class="entry entry_assistant">
                     <div>
