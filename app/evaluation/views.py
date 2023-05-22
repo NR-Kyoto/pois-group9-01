@@ -13,9 +13,6 @@ import difflib
 from django.shortcuts import render
 from django.http import HttpResponse
 
-from django.shortcuts import render
-from django.http import HttpResponse
-
 import json
 import azure.cognitiveservices.speech as speech_sdk
 
@@ -242,5 +239,3 @@ def evaluate_speech(script):
         })
 
     return dic
-
-
