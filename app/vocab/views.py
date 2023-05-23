@@ -150,3 +150,20 @@ def mock_post_selected(request):
         print(res)
 
         return JsonResponse(res)
+
+# Chat中の単語登録
+# TODO error時の処理
+def mock_add_word(request):
+
+    res = {"saved" : False}
+    if request.method == 'POST':
+        selected = json.loads(request.POST.get("selected"))
+
+        dic = search_word(selected["text"])
+        dic['context'] = selected["context"]
+        form = Wordbook(**dic)
+
+        form.save()
+        res['saved'] = True
+
+    return JsonResponse(res)
