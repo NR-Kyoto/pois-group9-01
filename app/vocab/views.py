@@ -44,7 +44,7 @@ def add_word(request):
     else:
         form = WordbookForm()
 
-    word = search_word()
+    #word = search_word()
 
     return render(request, 'vocab/add_word.html', {'form': form})
 
