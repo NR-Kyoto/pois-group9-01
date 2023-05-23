@@ -35,6 +35,17 @@ def text_to_speech(text):
     tts = gTTS(message, lang='en')
     tts.save('gTTS_test.mp3')
 
+    with tempfile.NamedTemporaryFile(delete=True, suffix="_webm") as audio_webm:
+        command = ['ffmpeg', '-y', '-i', 'gTTS_test.mp3','-f', 'webm', str(audio_webm.name)]
+        subprocess.run(command)
+
+        with open(str(audio_webm.name), 'rb') as f:
+            print(type(f))
+            audio_b = f.read()
+            audio_base64 = base64.b64encode(audio_b).decode('utf-8')
+
+    return audio_base64
+
 def start_chat():
     prompt = "Please chat with me in super-easy English little by little. I am a foreigner. I am alone. I understand little English. Please talk to me like I'm a three-year-old. I only understand one sentence at a time. Please start a chat with me."
 
@@ -99,8 +110,10 @@ def mock_post(request):
         message_list.append({"role":"user","content":data})
         gpt = generate_text(message_list)
 
+        audio_base64 = text_to_speech(gpt)
+
         new_entries = [{"speaker": "user", "isAssistant": False, "text":data},
-                          {"speaker": "assistant", "isAssistant": True, "text": gpt}]
+                          {"speaker": "assistant", "isAssistant": True, "text": gpt, "audio": audio_base64}]
         data2.extend(new_entries)
         res = {"chat": data2}
         return JsonResponse(res)
