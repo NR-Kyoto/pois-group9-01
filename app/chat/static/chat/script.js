@@ -175,7 +175,7 @@ function sendSelected(text, context, pos_x_y){
     form_data.append("selected", selected_JSON);
 
     const request = new Request(
-        "/chat/mock_post_selected/",
+        "/vocab/mock_post_selected/",
         {headers: {'X-CSRFToken': csrftoken},
         }
     );
@@ -255,7 +255,7 @@ function registerWords(){
     console.log(selected_JSON)
     console.log("registered")
     const request = new Request(
-        "/chat/mock_post_selected/",//TODO: change to registering URL
+        "/vocab/mock_add_word/",//TODO: change to registering URL
         {headers: {'X-CSRFToken': csrftoken},
         }
     );

@@ -97,7 +97,8 @@ def mock_post(request):
 
         message_list = clean_message_list(data2)
         message_list.append({"role":"user","content":data})
-        gpt = generate_text(message_list)
+        #gpt = generate_text(message_list)
+        gpt = "gpt text" #for testing
 
         new_entries = [{"speaker": "user", "isAssistant": False, "text":data},
                           {"speaker": "assistant", "isAssistant": True, "text": gpt}]
