@@ -149,5 +149,5 @@ def mock_post_selected(request):
         print("selected context : " + context)
 
         meanings = "some randome meanings text or json"
-        res = {"text": text, "meanings": meanings}
+        res = {"text": text, "meaning": meanings, "category": "noun", "word_flag": False}
         return JsonResponse(res)
