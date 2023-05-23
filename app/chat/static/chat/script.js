@@ -303,12 +303,33 @@ function send_and_evaluate(chat_history){
         method: 'POST',
         mode: 'same-origin',
         body: form_data,
-    }).then(function(response){
+    }).then(function(){
         console.log("画面遷移")
     });
 }
 
+function initializeChat(){
+    const request = new Request(
+        "/chat/mock_init/",
+        {headers: {'X-CSRFToken': csrftoken},
+        }
+    );
 
+    fetch(request, {
+        method: 'POST',
+        mode: 'same-origin',
+        body: "",
+    }).then(function(response){
+        response.json().then(function(data){
+            console.log("initialized");
+            console.log(data["chat"])
+            global_chat_history_list = data["chat"];
+            entry = data["chat"][0];
+            addEntry(entry["speaker"], entry["lines"], entry["isAssistant"]);
+            console.log(global_chat_history_list)
+        });
+    });
+}
 
 
 
@@ -357,5 +378,7 @@ document.addEventListener('DOMContentLoaded', function(){
     })
 
     evaluation_set()
+
+    initializeChat()
  });
 
