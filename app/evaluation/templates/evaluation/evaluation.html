@@ -4,6 +4,7 @@
 <html>
 
 <head>
+
     <title>Evaluation Page</title>
     <link rel="stylesheet" type="text/css" href="{% static 'evaluation/style.css' %}">
     <script>
@@ -38,6 +39,8 @@
 </head>
 
 <body>
+    <h1>User Profile</h1>
+    <p>ようこそ {{ user_id }} さん</p>
     <div class="score">
         <h1>会話の総評:</h1>
         {% if total_score <= 4 %} <p class="score-text">Poor がんばろう！</p>

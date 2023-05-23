@@ -17,6 +17,7 @@ import json
 import azure.cognitiveservices.speech as speech_sdk
 
 import os
+from django.contrib.auth.decorators import login_required
 
 # 認証情報を外部ファイルから読み出す
 COG_SERVICE_KEY=os.getenv('COG_SERVICE_KEY')
@@ -238,3 +239,8 @@ def evaluate_speech(script):
         })
 
     return dic
+
+@login_required
+def user_profile(request):
+    user_id = request.user.id
+    return render(request, 'evaluation.html', {'user_id': user_id})
