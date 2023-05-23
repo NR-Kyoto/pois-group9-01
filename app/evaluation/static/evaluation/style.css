@@ -1,0 +1,60 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f5f5f5;
+    margin: 0;
+    padding: 0;
+}
+
+h1 {
+    color: #333333;
+    text-align: center;
+    padding: 20px 0;
+}
+
+.score {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.score p {
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+.score-text {
+    font-size: 24px;
+    font-weight: bold;
+    color: #333333;
+}
+
+.weaknesses {
+    margin: 0 auto;
+    width: 600px;
+    padding: 20px;
+    background-color: #ffffff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.weaknesses p {
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+.example {
+    margin-bottom: 20px;
+}
+
+.sentence {
+    font-size: 16px;
+    color: #333333;
+    margin-bottom: 5px;
+}
+
+.fixed-sentence {
+    font-size: 16px;
+    color: #333333;
+}
+
+.highlight {
+    color: red;
+}

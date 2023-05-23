@@ -22,3 +22,4 @@ RUN pip install --upgrade setuptools
 RUN pip install -r /root/requirements.txt
 
 RUN apt-get install -y ffmpeg
+RUN apt-get install -y default-jre # language-tool-python用のJava
