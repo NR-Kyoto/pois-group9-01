@@ -113,8 +113,8 @@ def mock_post(request):
 
         audio_base64 = text_to_speech(gpt)
 
-        new_entries = [{"speaker": "user", "isAssistant": False, "text":data},
-                          {"speaker": "assistant", "isAssistant": True, "text": gpt, "audio": audio_base64}]
+        new_entries = [{"speaker": "user", "isAssistant": False, "lines":data, "audio": data_audio},
+                          {"speaker": "assistant", "isAssistant": True, "lines": gpt, "audio": audio_base64}]
         data2.extend(new_entries)
         res = {"chat": data2}
         return JsonResponse(res)
@@ -137,6 +137,19 @@ def mock_post_audio(request):
         print("audio text : " + text)
 
     return JsonResponse({"text": text ,"audio":data})#audio response is not necessarily here
+
+def mock_init(request):
+    if request.method == 'POST':
+        #gpt = start_chat()
+        #gpt = generate_text(message_list)
+        gpt = "gpt text" #for testing
+
+        audio_base64 = text_to_speech(gpt)
+
+        new_entries = [{"speaker": "assistant", "isAssistant": True, "lines": gpt, "audio": audio_base64}]
+        res = {"chat": new_entries}
+        return JsonResponse(res)
+
 
 def mock_post_selected(request):
     if request.method == 'POST':
