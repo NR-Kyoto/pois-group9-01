@@ -57,8 +57,12 @@ function submit_text_with_chat_history(e,form, chat_history_list){
         body: form_data,
     }).then(function(response){
         response.json().then(function(data){
-            //console.log(data);
+            console.log(data);
             updateEntries(data);
+            console.log(data["chat"][1]["audio"]);
+            const audio_base64 = data["chat"][1]["audio"]
+            const audio = new Audio("data:audio/webm; codecs=opus;base64," + audio_base64);
+            audio.play();
         });
     });
 }
