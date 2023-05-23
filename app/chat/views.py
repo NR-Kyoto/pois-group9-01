@@ -38,6 +38,7 @@ def mock_post(request):
         data = request.POST["text_input"]
         #data2 = [json.loads(e) for e in request.POST["chat_history"]]
         data2 = json.loads(request.POST["chat_history"])
+        data_audio = request.POST["audio64"] #base64 encoded audio (webm)
         #do something with data
 
         

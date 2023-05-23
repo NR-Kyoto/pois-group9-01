@@ -42,6 +42,7 @@ function submit_text_with_chat_history(e,form, chat_history_list){
     console.log(form);
     let form_data = new FormData(form);
     form_data.append("chat_history", JSON.stringify(chat_history_list));
+    form_data.append("audio64" , audio64_stash.length > 0 ? audio64_stash : null)
 
     const request = new Request(
         "/chat/mock_post/",
@@ -61,15 +62,16 @@ function submit_text_with_chat_history(e,form, chat_history_list){
     });
 }
 
+let audio64_stash = "";
 
 function audio_to_base64(e, audioChunks){
     e.preventDefault();
     const audioBlob = new Blob(audioChunks, {type: 'audio/webm; codecs=opus'});
     const reader = new FileReader();
     reader.readAsDataURL(audioBlob)
-    reader.onload = () => {
+    reader.onload = () =>{
         audio64 = (reader.result).split(",")[1];
-        audioChunks = [];
+        audio64_stash = audio64;
         sendAudioFile(audio64);
     }
 }
@@ -128,11 +130,18 @@ function sendAudioFile(audio64){
     }).then(function(response){
         response.json().then(function(data){
             console.log(data)
-            const audio_base64 = data["audio"];
-            const audio = new Audio("data:audio/webm; codecs=opus;base64," + audio_base64);
-            audio.play();
+            //const audio_base64 = data["audio"];
+            const audio_text = data["text"];
+            resetInputValue(audio_text);
+            //const audio = new Audio("data:audio/webm; codecs=opus;base64," + audio_base64);
+            //audio.play();
         });
     });
+}
+
+function resetInputValue(text){
+    const input = document.querySelector("#text_input");
+    input.value = text;
 }
 
 //detect selected text

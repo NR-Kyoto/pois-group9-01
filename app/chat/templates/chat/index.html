@@ -44,6 +44,8 @@
 
             <!-- chat below -->
             <div class="chat_area">
+                <!-- use when arranging css, delete later -->
+                <!--
                 <div class="entry entry_assistant">
                     <div>
                         <img src="https://ja.wikipedia.org/wiki/ChatGPT#/media/%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB:ChatGPT_logo.svg" alt="ChatGPT_logo">
@@ -78,6 +80,7 @@
                     <div class="lines">
                         コメント3(AI)
                     </div>
+                    
                 </div>
 
                 <div class="entry entry_user">
@@ -91,13 +94,14 @@
                         コメント4(ユーザ)
                     </div>
                 </div>
+                -->
             </div>
 
             <div>
                 <form id="form1" method="post">
                     {% csrf_token %}
                     <!--text input-->
-                    <input type="text" id="text_input" name="text_input" value="話して">
+                    <input type="text" id="text_input" name="text_input" value="say something to your MIC!">
                     <!--mic activation button-->
                     <button type="button" id="mic_button" name="mic_button">マイク</button>
                     <!--submit button-->
