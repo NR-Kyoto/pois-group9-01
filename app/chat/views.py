@@ -40,7 +40,6 @@ def mock_post(request):
         data2 = json.loads(request.POST["chat_history"])
         data_audio = request.POST["audio64"] #base64 encoded audio (webm)
         #do something with data
-
         
         new_entries = [{"speaker": "user", "isAssistant": False, "text":data},
                           {"speaker": "assistant", "isAssistant": True, "text": data + "ですね。"}]

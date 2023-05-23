@@ -39,9 +39,10 @@ function get_chat_history_list(){
 
 function submit_text_with_chat_history(e,form, chat_history_list){
     e.preventDefault();
-    console.log(form);
+    //let chat_history_list = ;
+    //console.log(form);
     let form_data = new FormData(form);
-    form_data.append("chat_history", JSON.stringify(chat_history_list));
+    form_data.append("chat_history", JSON.stringify(get_chat_history_list()));
     form_data.append("audio64" , audio64_stash.length > 0 ? audio64_stash : null)
 
     const request = new Request(
@@ -210,13 +211,12 @@ function updateEntries(data){
 //load functions after DOM is loaded
 document.addEventListener('DOMContentLoaded', function(){
 
-    let chat_history_list = get_chat_history_list();
 
     /**read form, write on console*/
     const submit_button = document.querySelector("#submit_button");
     const form = document.querySelector("#form1");
     submit_button.addEventListener("click", (e) => {
-        submit_text_with_chat_history(e,form, chat_history_list);
+        submit_text_with_chat_history(e,form);
     });
 
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
