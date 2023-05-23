@@ -113,8 +113,8 @@ def mock_post(request):
 
         audio_base64 = text_to_speech(gpt)
 
-        new_entries = [{"speaker": "user", "isAssistant": False, "text":data},
-                          {"speaker": "assistant", "isAssistant": True, "text": gpt, "audio": audio_base64}]
+        new_entries = [{"speaker": "user", "isAssistant": False, "lines":data, "audio": data_audio},
+                          {"speaker": "assistant", "isAssistant": True, "lines": gpt, "audio": audio_base64}]
         data2.extend(new_entries)
         res = {"chat": data2}
         return JsonResponse(res)
