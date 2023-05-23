@@ -153,18 +153,23 @@ function sending_selected_texts_setup(){
         if(!selected_DOM.isCollapsed){
             if(selected_DOM.anchorNode.parentElement.classList.contains("lines")
                 && selected_DOM.anchorNode === selected_DOM.focusNode){
-                    text = selected_DOM.toString();
+                    text = selected_DOM.toString().trim();
                     context = selected_DOM.anchorNode.parentElement.textContent.trim();
                     console.log("selected text: " + text);
                     console.log("context :" + context);
-                    sendSelected(text, context)
+                    if(text){
+                        range = selected_DOM.getRangeAt(0)
+                        rect = range.getBoundingClientRect();
+                        pos_x_y = [rect.x,rect.y]
+                        sendSelected(text, context, pos_x_y);
+                    }
             } 
         }
     });
 }
 
 //send word to server
-function sendSelected(text, context){
+function sendSelected(text, context, pos_x_y){
     const form_data = new FormData();
     const selected_JSON = JSON.stringify({"text": text, "context": context});
     form_data.append("selected", selected_JSON);
@@ -182,6 +187,13 @@ function sendSelected(text, context){
     }).then(function(response){
         response.json().then(function(data){
             console.log(data);
+            addWordTooltip(data,context);
+            addWordTooltip_show(pos_x_y)
+            document.addEventListener('click', (e)=>{
+                if(!e.target.closest('.tooltip')) {
+                    addWordTooltip_hide()
+                }
+            })
         });
     });
 }
@@ -203,6 +215,65 @@ function updateEntries(data){
         addEntry(entry["speaker"], entry["text"], entry["isAssistant"]);
     });
 }
+
+
+function addWordTooltip(data,context){
+    tooltip = document.querySelector("#tooltip_instance")
+    tooltip.querySelector(".word").innerHTML = data["text"];
+    tooltip.querySelector(".meanings").innerHTML = data["meaning"];
+    tooltip.querySelector(".context").innerHTML = context;
+    if(data["word_flag"]){
+        tooltip.querySelector(".category").innerHTML = data["category"];
+        tooltip.querySelector("#register_button").style.display = "";
+    }
+    document.body.appendChild(tooltip);
+}
+
+function addWordTooltip_show(pos_x_y){
+    const x = pos_x_y[0]
+    const y = pos_x_y[1]
+    tooltip = document.querySelector("#tooltip_instance")
+    tooltip.style.setProperty("top", ("calc(1.5rem + " + y + "px)"));
+    tooltip.style.setProperty("left", ("calc(1rem + " + x + "px)"));
+    //tooltip.style.left = x + "px";
+    tooltip.style.visibility = "visible";
+}
+
+function addWordTooltip_hide(){
+    tooltip = document.querySelector("#tooltip_instance")
+    tooltip.style.visibility = "hidden";
+    tooltip.querySelector("#register_button").style.display = "none";
+}
+
+function registerWords(){
+    const form_data = new FormData();
+    const tooltip = document.querySelector("#tooltip_instance")
+    const context = tooltip.querySelector(".context").textContent.trim();
+    const text = tooltip.querySelector(".word").textContent.trim();
+    const selected_JSON = JSON.stringify({"text": text, "context": context});
+    form_data.append("selected", selected_JSON);
+    console.log(selected_JSON)
+    console.log("registered")
+    const request = new Request(
+        "/chat/mock_post_selected/",//TODO: change to registering URL
+        {headers: {'X-CSRFToken': csrftoken},
+        }
+    );
+
+    fetch(request, {
+        method: 'POST',
+        mode: 'same-origin',
+        body: form_data,
+    }).then(function(response){
+        response.json().then(function(data){
+            console.log(data);
+            //give feedback
+        });
+    });
+}
+
+
+
 
 
 
@@ -245,5 +316,10 @@ document.addEventListener('DOMContentLoaded', function(){
         console.log('getUserMedia not supported on your browser!');
     }
     sending_selected_texts_setup();
+
+    document.querySelector("#register_button").addEventListener("click",(e)=>{
+        e.preventDefault();
+        registerWords();
+    })
  });
 
