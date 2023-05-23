@@ -17,6 +17,9 @@ import json
 import azure.cognitiveservices.speech as speech_sdk
 
 import os
+from chat.models import Audio
+
+import base64, io, subprocess, tempfile
 
 # 認証情報を外部ファイルから読み出す
 COG_SERVICE_KEY=os.getenv('COG_SERVICE_KEY')
@@ -107,6 +110,15 @@ class error:
     
 def evaluationpage(request):
 
+    queryset = Audio.objects.order_by('id').values()
+    print(queryset)
+    texts = []
+    for item in queryset:
+        print("++++++++++++++++++++")
+        text = item["text"]
+        print(item["text"])
+        texts.append(text)
+
     sentances = split_sentances(texts)
     errors = check_grammar(sentances)
 
@@ -143,8 +155,8 @@ def split_sentances(texts):
     sentances = []
     for text in texts:
         splited = re.split('[.?!]', text)
-        splited.remove('')
         sentances += [s if s[0] != ' ' else s[1:] for s in splited]
+        if '' in sentances: sentances.remove('')
 
     return sentances
 
@@ -194,6 +206,12 @@ def grammar_weak_ranking(errors):
 
 # TODO 複数のwavファイルに対応
 def evaluate_speech(script):
+
+    # with tempfile.NamedTemporaryFile(delete=True, suffix="_webm") as audio_webm:
+    #     audio_webm.write(base64.b64decode(data))
+    #     #print(type(audio_webm))
+    #     with tempfile.NamedTemporaryFile(delete=True, suffix="_wav") as audio_wav:
+    #         command = ['ffmpeg', '-y', '-i', str(audio_webm.name),'-f', 'wav', '-c:a', 'pcm_s16le', str(audio_wav.name)]
 
     # 評価パラメータ
     # 5段階評価，文・単語を評価
