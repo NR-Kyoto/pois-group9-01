@@ -3,6 +3,13 @@ from django.http import HttpResponse, JsonResponse
 import speech_recognition as sr
 from gtts import gTTS
 import json, base64, io, subprocess, tempfile
+import openai
+import os
+import re
+
+openai.api_key = os.getenv("OPENAI_API_KEY")
+
+model_engine = "gpt-3.5-turbo"
 
 
 def chatpage(request):
@@ -28,6 +35,54 @@ def text_to_speech(text):
     tts = gTTS(message, lang='en')
     tts.save('gTTS_test.mp3')
 
+def start_chat():
+    prompt = "Please chat with me in super-easy English little by little. I am a foreigner. I am alone. I understand little English. Please talk to me like I'm a three-year-old. I only understand one sentence at a time. Please start a chat with me."
+
+    message_list = [{"role": "system", "content": prompt}]
+
+    return generate_text(message_list)
+
+#chatgptにアクセスするための関数
+def generate_text(message_list):
+
+    try:
+        response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",
+            messages=message_list,
+            max_tokens=100
+        )
+    except Exception as e:
+        print(e)
+        return "AI is currently unavailable"
+
+    chat_message = response["choices"][0]["message"]
+
+    chat = chat_message["content"]
+    l = chat.split()
+    num = len(l)
+
+    if num>30:
+        message_len = len(message_list)
+        message_list[message_len-1]["content"] = message_list[message_len-1]["content"]+" in 20 words"
+        chat = generate_text(message_list)
+        
+    return chat
+
+def clean_message_list(message_list_input):
+    message_list=[]
+
+    for message in message_list_input:
+        if message["isAssistant"]==True:
+            role = "assistant"
+        else:
+            role = "user"
+        content_temp = message["lines"]
+        content = re.sub("\n", " ", content_temp)
+        content = content.strip()
+
+        message_list.append({"role":role,"content":content})
+    
+    return message_list
 
 #for development below, remove before launch
 def mock(request):
@@ -39,10 +94,13 @@ def mock_post(request):
         #data2 = [json.loads(e) for e in request.POST["chat_history"]]
         data2 = json.loads(request.POST["chat_history"])
         data_audio = request.POST["audio64"] #base64 encoded audio (webm)
-        #do something with data
-        
+
+        message_list = clean_message_list(data2)
+        message_list.append({"role":"user","content":data})
+        gpt = generate_text(message_list)
+
         new_entries = [{"speaker": "user", "isAssistant": False, "text":data},
-                          {"speaker": "assistant", "isAssistant": True, "text": data + "ですね。"}]
+                          {"speaker": "assistant", "isAssistant": True, "text": gpt}]
         data2.extend(new_entries)
         res = {"chat": data2}
         return JsonResponse(res)
