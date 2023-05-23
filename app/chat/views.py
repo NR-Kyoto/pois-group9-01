@@ -108,8 +108,8 @@ def mock_post(request):
 
         message_list = clean_message_list(data2)
         message_list.append({"role":"user","content":data})
-        #gpt = generate_text(message_list)
-        gpt = "gpt text" #for testing
+        gpt = generate_text(message_list)
+        #gpt = "gpt text" #for testing
 
         audio_base64 = text_to_speech(gpt)
 
