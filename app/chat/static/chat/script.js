@@ -60,7 +60,7 @@ function submit_text_with_chat_history(e,form, chat_history_list){
             console.log(data);
             updateEntries(data);
             console.log(data["chat"][1]["audio"]);
-            const audio_base64 = data["chat"][1]["audio"]
+            const audio_base64 = data["chat"][data["chat"].length-1]["audio"]
             const audio = new Audio("data:audio/webm; codecs=opus;base64," + audio_base64);
             audio.play();
         });
