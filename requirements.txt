@@ -4,5 +4,8 @@ SpeechRecognition
 gTTS
 scipy
 
+beautifulsoup4 # スクレイピング用
+deep_translator # 翻訳
+
 ###### Requirements with Version Specifiers ######`
 django==3.2

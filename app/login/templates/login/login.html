@@ -1,0 +1,30 @@
+{% extends 'login/base.html' %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <title>ログインページ</title>
+    <link rel="stylesheet" href="{% static 'login/style.css' %}">
+</head>
+
+<body>
+    {% block content %}
+    <h2>ログインページ</h2>
+    <form method="post" class="login-form">
+        {% csrf_token %}
+        <label for="{{ form.user_id.id_for_label }}">ユーザID:</label>
+        {{ form.user_id }}
+        <br>
+        <label for="{{ form.password.id_for_label }}">パスワード:</label>
+        {{ form.password }}
+        <br>
+        <button type="submit" value="ログイン">ログイン</button>
+    </form>
+
+
+    {% endblock %}
+</body>
+
+</html>
