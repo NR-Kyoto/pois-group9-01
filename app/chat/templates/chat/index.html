@@ -113,7 +113,7 @@
             </div>
 
             <div>
-                <form id="form1" method="post">
+                <form id="form1" method="post" onsubmit="return onSubmit();">
                     {% csrf_token %}
                     <!--text input-->
                     <input type="text" id="text_input" name="text_input" value="say something to your MIC!">

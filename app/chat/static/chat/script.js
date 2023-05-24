@@ -331,7 +331,11 @@ function initializeChat(){
     });
 }
 
-
+function onSubmit(){
+    const button = document.querySelector("#submit_button");
+    button.click();
+    return false;
+}
 
 
 //load functions after DOM is loaded
