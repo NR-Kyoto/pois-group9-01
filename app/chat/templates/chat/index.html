@@ -1,3 +1,4 @@
+{% extends 'chat/base.html' %}
 <!DOCTYPE html>
 <html lang="ja">
 
@@ -5,13 +6,13 @@
         <title>Chat_page</title>
         {% load static %}
         <link rel="stylesheet" type="text/css" href="{% static 'chat/style.css' %}">
+        {% block scripts %}
         <script type="text/javascript" src="{% static 'chat/script.js' %}"></script>
+        {% endblock %}
     </head>
     <body>
-        <header>
-            <h1>English Bot 2000</h1>
-        </header>
         <main>
+        {% block content %}    
             <h2>
                 This is the chat index page!
             </h2>
@@ -125,13 +126,11 @@
             </div>
 
             <div>
-                <a href="{% url eveluation%}">会話を終了する</a>
+                <a href="../../evaluation">会話を終了する</a>
             </div>
 
         </main>
-        <footer>
-            <p>Footer</p>
-        </footer>
+        {% endblock %}
         
 
     </body>
