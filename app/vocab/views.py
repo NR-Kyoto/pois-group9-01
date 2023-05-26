@@ -11,6 +11,7 @@ from login.models import User
 from bs4 import BeautifulSoup 
 import requests
 import re
+import json
 
 from deep_translator import GoogleTranslator # 翻訳
 
