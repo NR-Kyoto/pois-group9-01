@@ -1,5 +1,15 @@
 ###### Requirements without Version Specifiers ######`
 openai
+SpeechRecognition
+gTTS
+scipy
+
+beautifulsoup4 # スクレイピング用
+deep_translator # 翻訳
+
+azure-cognitiveservices-speech # for evaluate speech
+language-tool-python # 文法評価
+deep-translator
 
 ###### Requirements with Version Specifiers ######`
 django==3.2

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    {% load static %}
+    <title> ~ English Bot 2000 ~ </title>
+    <link rel="stylesheet" type="text/css" href="{% static 'home/style.css' %}">
+</head>
+<body>
+    <header>
+        <div style="text-align: center;">
+            <h1 style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color:#000000; font-size: 48px;"> ~ English Bot 2000 ~ </h1>
+        </div>
+    </header>
+      
+    <div class="container">
+    <div style="text-align: center">
+        <span>Welcome, {{ username }}</span>
+    </div>
+    <div style="height: 50px; margin-top: 50px;"></div>
+
+
+    <div>
+        <div style="text-align: center;">
+        
+        <a class="btn" href="/../../chat/mock">英会話</a>
+        <a class="btn" href="/../../vocab">単語帳</a>
+        <a class="btn" href="{%  url 'homepage' %}">総評</a>
+        
+    </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Add Word</title>
+</head>
+<body>
+  <h2>Add Word</h2>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Save</button>
+    <button type="button" onclick="cancel()">Cancel</button>
+  </form>
+
+  <script>
+    function cancel() {
+      history.go(-1);
+    }
+  </script>
+</body>
+</html>
+

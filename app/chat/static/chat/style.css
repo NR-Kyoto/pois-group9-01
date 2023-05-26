@@ -1,0 +1,17 @@
+h1 {
+    background-color :azure;
+}
+
+.icon {
+    width: 10%;
+    height: 10%;
+}
+
+.tooltip {
+    display: hidden;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    background-color: rgba(250, 235, 215, 0.9);
+}
+

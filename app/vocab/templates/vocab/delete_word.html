@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Delete Word</title>
+</head>
+<body>
+  <h2>Delete Word</h2>
+  <p>Are you sure you want to delete "{{ word.word }}"?</p>
+  <form method="post">
+    {% csrf_token %}
+    <button type="submit">Delete</button>
+  </form>
+  <button type="button" onclick="cancel()">Cancel</button>
+  
+  <script>
+    function cancel() {
+      history.go(-1);
+    }
+  </script>
+</body>
+</html>

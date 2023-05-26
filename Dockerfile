@@ -15,7 +15,11 @@ COPY requirements.txt /root/
 RUN apt-get install -y fonts-noto-cjk
 
 RUN apt-get install -y vim less
+RUN apt-get install -y flac
 RUN pip install --upgrade pip
 RUN pip install --upgrade setuptools
 
 RUN pip install -r /root/requirements.txt
+
+RUN apt-get install -y ffmpeg
+RUN apt-get install -y default-jre # language-tool-python用のJava
