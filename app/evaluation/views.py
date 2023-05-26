@@ -111,13 +111,15 @@ def evaluationpage(request):
 	        "words": []
         }
 
+    count = 0
+
     for item in queryset:
 
         text = item["text"]
         if not text: continue
         texts.append(text)
         
-        if item["fields"]["audio"] != None:
+        if item["fields"]["audio"]:
 
             # webm -> wav
             with tempfile.NamedTemporaryFile(delete=True, suffix="_webm") as audio_webm:
@@ -146,8 +148,17 @@ def evaluationpage(request):
                     speech_scores['completeness_score'] += result['completeness_score']
                     speech_scores['words'] += result['words']
 
+                    count += 1
+
     # 評価した内容をデータベースから削除
     Audio.objects.all().delete()
+
+    # 各スコアを平均
+    if count > 0:
+        speech_scores['score'] /= count
+        speech_scores['accuracy_score'] /= count
+        speech_scores['fluency_score'] /= count
+        speech_scores['completeness_score'] /= count
 
     # 単語ごとの発音評価でソート
     sorted_words = sorted(speech_scores['words'], key=lambda x: x['score'])
