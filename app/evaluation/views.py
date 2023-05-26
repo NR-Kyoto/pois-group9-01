@@ -31,6 +31,7 @@ class error:
     end: int        # 文内での終了位置
     message: str    # エラーメッセージ
     suggestion: str # 正しい文
+    tras: bool      # messageを翻訳したかどうか
 
     def __init__(self, index, match):
         self.index = index
@@ -38,34 +39,12 @@ class error:
         self.errtype = match.ruleId
         self.start = match.offset
         self.end = self.start + match.errorLength
-        # self.message = GoogleTranslator(source='auto',target='ja').translate(match.message)
         self.suggestion = match.sentence[:self.start] + match.replacements[0] + match.sentence[self.end:]
-
-        # カッコ内の英単語がそのままになるようにメッセージを翻訳
-        bra_pos = list(re.compile(r'\“.*?\”|\‘.*?\’').finditer(match.message))
-        
-        if len(bra_pos) == 0:
-            self.message = GoogleTranslator(source='auto',target='ja').translate(match.message)
-        else:
-            # XXXで置き換え
-            tmp_m = ""
-            start = 0
-            for i, pos in enumerate(bra_pos):
-                tmp_m += match.message[start:pos.start()] + "\"XXX" + str(i) + "\""
-                start = pos.end()
-            tmp_m += match.message[start:]
-
-            # 翻訳
-            trans = GoogleTranslator(source='auto',target='ja').translate(tmp_m)
-
-            # 元の単語に置き換える
-            for i, pos in enumerate(bra_pos):
-                trans = trans.replace("XXX" + str(i), match.message[pos.start()+1:pos.end()-1])
-            
-            # TODO 全部翻訳するのは時間がかかるので一部に変更
-            self.message = trans
+        self.message = match.message
+        self.trans = False
 
     def to_html(self):
+        self.trans_message()
         html = '<div>'
         html += '<p>' + self.sentence[:self.start]
         html += '<strong>' + self.sentence[self.start:self.end] + '</strong>'
@@ -76,6 +55,7 @@ class error:
         return html
     
     def to_json(self):
+        self.trans_message()
         dic = dict({
             "sentence" : self.sentence,
             "start_pos" : self.start,
@@ -85,6 +65,35 @@ class error:
         })
     
         return dic
+
+    def trans_message(self):
+
+        if self.trans: return
+
+        # カッコ内の英単語がそのままになるようにメッセージを翻訳
+        bra_pos = list(re.compile(r'\“.*?\”|\‘.*?\’').finditer(self.message))
+        
+        if len(bra_pos) == 0:
+            self.message = GoogleTranslator(source='auto',target='ja').translate(self.message)
+        else:
+            # XXXで置き換え
+            tmp_m = ""
+            start = 0
+            for i, pos in enumerate(bra_pos):
+                tmp_m += self.message[start:pos.start()] + "\"XXX" + str(i) + "\""
+                start = pos.end()
+            tmp_m += self.message[start:]
+
+            # 翻訳
+            trans = GoogleTranslator(source='auto',target='ja').translate(tmp_m)
+
+            # 元の単語に置き換える
+            for i, pos in enumerate(bra_pos):
+                trans = trans.replace("XXX" + str(i), self.message[pos.start()+1:pos.end()-1])
+            
+            self.message = trans
+
+        self.trans = True
     
 # 評価
 # 文章なし -> 評価しない
