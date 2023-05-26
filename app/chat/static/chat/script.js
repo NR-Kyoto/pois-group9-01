@@ -105,14 +105,16 @@ function mic_setup(mediaRecorder){
         mic_button.style.color = "";
         isRecording = false;
     }
+    let timeoutID;
     mic_button.addEventListener("click", function(e) {
         e.preventDefault();
         console.log("mic_button clicked");
+        clearTimeout(timeoutID);
         if(isRecording){
             mic_off();
         } else {
             mic_on();
-            setTimeout(() => {
+            timeoutID = setTimeout(() => {
                 mic_off();
             }, 60000);
         }
