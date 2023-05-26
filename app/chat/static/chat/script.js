@@ -96,6 +96,7 @@ function mic_setup(mediaRecorder){
         mic_button.style.background = "red";
         mic_button.style.color = "black";
         isRecording = true;
+        setButtonDisabled(true);
     }
     function mic_off(){
         mediaRecorder.stop();
@@ -104,6 +105,7 @@ function mic_setup(mediaRecorder){
         mic_button.style.background = "";
         mic_button.style.color = "";
         isRecording = false;
+        setButtonDisabled(false);
     }
     let timeoutID;
     mic_button.addEventListener("click", function(e) {
@@ -315,6 +317,11 @@ function onSubmit(){
     const button = document.querySelector("#submit_button");
     button.click();
     return false;
+}
+
+function setButtonDisabled(setDisabled){
+    const button = document.querySelector("#submit_button");
+    button.disabled = setDisabled;
 }
 
 
