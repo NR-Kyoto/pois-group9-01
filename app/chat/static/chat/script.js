@@ -381,3 +381,7 @@ document.addEventListener('DOMContentLoaded', function(){
     setStartButton();
  });
 
+window.addEventListener("beforeunload", function (e) {
+    e.preventDefault();
+    e.returnValue = "";
+});
