@@ -282,31 +282,6 @@ function registerWords(){
     });
 }
 
-function evaluation_set(){
-    document.querySelector("#evaluate_button").addEventListener("click",(e)=>{
-        e.preventDefault()
-        send_and_evaluate(global_chat_history_list);
-    });
-}
-
-function send_and_evaluate(chat_history){
-    const form_data = new FormData();
-    form_data.append("chat", chat_history);
-
-    const request = new Request(
-        "/evaluate/",
-        {headers: {'X-CSRFToken': csrftoken},
-        }
-    );
-
-    fetch(request, {
-        method: 'POST',
-        mode: 'same-origin',
-        body: form_data,
-    }).then(function(){
-        console.log("画面遷移")
-    });
-}
 
 function initializeChat(){
     const request = new Request(
@@ -381,7 +356,6 @@ document.addEventListener('DOMContentLoaded', function(){
         registerWords();
     })
 
-    evaluation_set()
 
     initializeChat()
  });
