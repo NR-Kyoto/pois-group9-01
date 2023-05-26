@@ -236,7 +236,7 @@ function addWordTooltip(data,context){
     tooltip.querySelector(".word").innerHTML = data["text"];
     tooltip.querySelector(".meanings").innerHTML = data["meaning"];
     tooltip.querySelector(".context").innerHTML = context;
-    if(data["word_flag"]){
+    if(data["word_falg"]){
         tooltip.querySelector(".category").innerHTML = data["category"];
         tooltip.querySelector("#register_button").style.display = "";
     }
@@ -282,6 +282,11 @@ function registerWords(){
         response.json().then(function(data){
             console.log(data);
             //give feedback
+            if(data["saved"]){
+                alert("saved!");
+            }else{
+                alert("failed to save...");
+            }
         });
     });
 }
