@@ -287,7 +287,7 @@ function registerWords(){
 }
 
 
-function initializeChat(){
+function initializeChat(audio){
     const request = new Request(
         "/chat/mock_init/",
         {headers: {'X-CSRFToken': csrftoken},
@@ -307,7 +307,7 @@ function initializeChat(){
             addEntry(entry["speaker"], entry["lines"], entry["isAssistant"]);
             console.log(global_chat_history_list)
             const audio_base64 = data["chat"][data["chat"].length-1]["audio"]
-            const audio = new Audio("data:audio/webm; codecs=opus;base64," + audio_base64);//TODO: enable autoplay for safari
+            audio.src = ("data:audio/webm; codecs=opus;base64," + audio_base64);//TODO: enable autoplay for safari
             audio.play();
         });
     });
@@ -322,6 +322,16 @@ function onSubmit(){
 function setButtonDisabled(setDisabled){
     const button = document.querySelector("#submit_button");
     button.disabled = setDisabled;
+}
+
+function setStartButton(){
+    const button = document.querySelector("#start_button");
+    button.addEventListener("click",(e)=>{
+        e.preventDefault();
+        const audio = new Audio();
+        initializeChat(audio);
+        button.style.display = "none";
+    });
 }
 
 
@@ -368,7 +378,6 @@ document.addEventListener('DOMContentLoaded', function(){
         registerWords();
     })
 
-
-    initializeChat()
+    setStartButton();
  });
 
