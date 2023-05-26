@@ -210,8 +210,8 @@ def split_sentances(texts):
     sentances = []
     for text in texts:
         splited = re.split('[.?!]', text)
+        if '' in splited: splited.remove('')
         sentances += [s if s[0] != ' ' else s[1:] for s in splited]
-        if '' in sentances: sentances.remove('')
 
     return sentances
 
