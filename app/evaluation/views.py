@@ -13,6 +13,8 @@ import base64, io, subprocess, tempfile
 
 import azure.cognitiveservices.speech as speech_sdk
 
+from .apps import EvaluationConfig
+
 from chat.models import Audio
 
 # 認証情報を外部ファイルから読み出す
@@ -20,6 +22,8 @@ COG_SERVICE_KEY=os.getenv('COG_SERVICE_KEY')
 COG_SERVICE_REGION=os.getenv('COG_SERVICE_REGION')
 
 check_categories = ['CONFUSED_WORDS', 'GRAMMAR', 'REPETITIONS', 'TYPOS']
+
+grammar_tool = language_tool_python.LanguageTool('en-US')
 
 @dataclass(init=False)
 class error:
@@ -214,17 +218,13 @@ def split_sentances(texts):
 # sentances : 発話した文のリスト
 def check_grammar(sentances):
 
-    tool = language_tool_python.LanguageTool('en-US')
-    
     errors = []
     for i, s in enumerate(sentances):
         # 文法をチェック
-        matches = tool.check(s)
+        matches = grammar_tool.check(s)
 
         # 定められたカテゴリに合うものだけを記録
         errors += [error(i, match) for match in matches if (match.category in check_categories)]
-
-    tool.close()
 
     return errors
 
