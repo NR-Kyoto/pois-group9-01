@@ -8,7 +8,9 @@
   <form method="post">
     {% csrf_token %}
     {{ form.as_p }}
-    <button type="submit">Save</button>
+    <!-- <button type="submit">Save</button> -->
+    <button formaction="/vocab/add/">登録</button>
+    <button formaction="/vocab/autofill_add/">自動入力</button>
     <button type="button" onclick="cancel()">Cancel</button>
   </form>
 

@@ -34,18 +34,21 @@ def speech_to_text(audio_file):
 def text_to_speech(text):
     message = text
     tts = gTTS(message, lang='en')
-    tts.save('gTTS_test.mp3')
+    #tts.save('gTTS_test.mp3')
 
-    with tempfile.NamedTemporaryFile(delete=True, suffix="_webm") as audio_webm:
-        command = ['ffmpeg', '-y', '-i', 'gTTS_test.mp3','-f', 'webm', str(audio_webm.name)]
-        subprocess.run(command)
+    # with tempfile.NamedTemporaryFile(delete=True, suffix="_webm") as audio_webm:
+    #     command = ['ffmpeg', '-y', '-i', 'gTTS_test.mp3','-f', 'webm', str(audio_webm.name)]
+    #     subprocess.run(command)
 
-        with open(str(audio_webm.name), 'rb') as f:
-            print(type(f))
-            audio_b = f.read()
-            audio_base64 = base64.b64encode(audio_b).decode('utf-8')
+    #     with open(str(audio_webm.name), 'rb') as f:
+    #         print(type(f))
+    #         audio_b = f.read()
+    #         audio_base64 = base64.b64encode(audio_b).decode('utf-8')
 
-    return audio_base64
+    with tempfile.NamedTemporaryFile(delete=True, suffix="_mp3") as audio_mp3:
+        tts.save(str(audio_mp3.name))
+        audio_base64 = base64.b64encode(audio_mp3.read()).decode('utf-8')
+        return audio_base64
 
 def start_chat():
     prompt = "Please chat with me in super-easy English little by little. I am a foreigner. I am alone. I understand little English. Please talk to me like I'm a three-year-old. I only understand one sentence at a time. Please start a chat with me."
@@ -105,7 +108,9 @@ def mock_post(request):
         data = request.POST["text_input"]
         #data2 = [json.loads(e) for e in request.POST["chat_history"]]
         data2 = json.loads(request.POST["chat_history"])
-        data_audio = request.POST["audio64"] #base64 encoded audio (webm)
+        data_audio_uri = request.POST["audio64"] #base64 encoded audio "URI" (webm/mp3)
+        data_audio = data_audio_uri.split(",")[1] if data_audio_uri != "" else None #base64 encoded audio (webm/mp3)
+
 
         message_list = clean_message_list(data2)
         message_list.append({"role":"user","content":data})
@@ -115,20 +120,23 @@ def mock_post(request):
         #gpt = "gpt text" #for testing
 
         audio_base64 = text_to_speech(gpt)
+        audio_base64_uri = "data:audio/mpeg;base64,"+ audio_base64
 
-        new_entries = [{"speaker": "user", "isAssistant": False, "lines":data, "audio": data_audio},
-                          {"speaker": "assistant", "isAssistant": True, "lines": gpt, "audio": audio_base64}]
+        new_entries = [{"speaker": "user", "isAssistant": False, "lines":data, "audio": data_audio_uri},
+                          {"speaker": "assistant", "isAssistant": True, "lines": gpt, "audio": audio_base64_uri}]
         data2.extend(new_entries)
         res = {"chat": data2}
         return JsonResponse(res)
 
 def mock_post_audio(request):
     if request.method == 'POST':
-        data = request.POST["audio"]
+        audio_uri = request.POST["audio"]
+        data = audio_uri.split(",")[1]
+
         #print(data)
         #decode data of base64 to .wav file
 
-        with tempfile.NamedTemporaryFile(delete=True, suffix="_webm") as audio_webm:
+        with tempfile.NamedTemporaryFile(delete=True, suffix="_webm") as audio_webm:#data can be .mp3 (safari)
             audio_webm.write(base64.b64decode(data))
             #print(type(audio_webm))
             with tempfile.NamedTemporaryFile(delete=True, suffix="_wav") as audio_wav:
@@ -139,17 +147,19 @@ def mock_post_audio(request):
 
         print("audio text : " + text)
 
-    return JsonResponse({"text": text ,"audio":data})#audio response is not necessarily here
+    return JsonResponse({"text": text ,"audio":audio_uri})#audio response is not necessarily here
 
 def mock_init(request):
     if request.method == 'POST':
-        #gpt = start_chat()
+        gpt = start_chat()
         #gpt = generate_text(message_list)
-        gpt = "gpt text" #for testing
+        #gpt = "gpt text" #for testing
 
         audio_base64 = text_to_speech(gpt)
+        audio_base64_uri = "data:audio/mpeg;base64,"+ audio_base64
 
-        new_entries = [{"speaker": "assistant", "isAssistant": True, "lines": gpt, "audio": audio_base64}]
+
+        new_entries = [{"speaker": "assistant", "isAssistant": True, "lines": gpt, "audio": audio_base64_uri}]
         res = {"chat": new_entries}
         return JsonResponse(res)
 
