@@ -26,6 +26,8 @@
                     </div>
                     <div class="lines">
                     </div>
+                    <audio class="voice"></audio>
+                    <button type="button" id="play_button" name="play_button" onclick="replayAudio(this)" >Play</button>
                 </div>
             </template>
 
@@ -40,6 +42,8 @@
                     </div>
                     <div class="lines">
                     </div>
+                    <audio class="voice" ></audio>
+                    <button type="button" id="play_button" name="play_button" onclick="replayAudio(this)" >Play</button>
                 </div>
             </template>
 
@@ -116,13 +120,15 @@
                 -->
             </div>
 
-            <div>
+            <div class="user_input">
                 <form id="form1" method="post" onsubmit="return onSubmit();">
                     {% csrf_token %}
                     <!--text input-->
                     <input type="text" id="text_input" name="text_input" value="say something to your MIC!">
                     <!--mic activation button-->
                     <button type="button" id="mic_button" name="mic_button">マイク</button>
+                    <audio class="voice" ></audio>
+                    <button type="button" id="play_button" name="play_button" onclick="replayAudio(this)" >Play</button>
                     <!--submit button-->
                     <button type="button" id="submit_button" name="submit_button" >送信</button>
                 </form>

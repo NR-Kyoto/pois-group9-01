@@ -86,7 +86,14 @@ function audio_to_base64(e, audioChunks){
         audio64_uri = reader.result;
         audio64_stash = audio64_uri;
         sendAudioFile(audio64_uri);
+        setAudioOnInput(audio64_uri);
     }
+}
+
+function setAudioOnInput(audio_uri){
+    const input_audio = document.querySelector(".user_input .voice");
+    console.log(input_audio);
+    input_audio.src = audio_uri;
 }
 
 function mic_setup(mediaRecorder){
@@ -215,7 +222,7 @@ function sendSelected(text, context, pos_x_y){
     });
 }
 
-function addEntry(speaker, lines, isAssistant){
+function addEntry(speaker, lines, isAssistant, audio_uri){
     const chat_area = document.querySelector(".chat_area");
     const template_assistant = document.querySelector("#chat_entry_template_assistant");
     const template_user = document.querySelector("#chat_entry_template_user");
@@ -223,6 +230,7 @@ function addEntry(speaker, lines, isAssistant){
     const clone = template.content.cloneNode(true);
     clone.querySelector(".speaker").innerHTML = speaker;
     clone.querySelector(".lines").innerHTML = lines;
+    clone.querySelector(".voice").src = audio_uri;
     chat_area.appendChild(clone);
 }
 
@@ -230,7 +238,7 @@ function updateEntries(data){
     global_chat_history_list = data["chat"]
     const adding_data = (data["chat"]).slice(data["chat"].length - 2);
     adding_data.forEach(entry => {
-        addEntry(entry["speaker"], entry["lines"], entry["isAssistant"]);
+        addEntry(entry["speaker"], entry["lines"], entry["isAssistant"], entry["audio"]);
     });
     console.log(global_chat_history_list)
 }
@@ -316,7 +324,7 @@ function initializeChat(audio){
             console.log(data["chat"])
             global_chat_history_list = data["chat"];
             entry = data["chat"][0];
-            addEntry(entry["speaker"], entry["lines"], entry["isAssistant"]);
+            addEntry(entry["speaker"], entry["lines"], entry["isAssistant"], entry["audio"]);
             console.log(global_chat_history_list)
             const audio_base64_uri = data["chat"][data["chat"].length-1]["audio"]
             //audio.src = ("data:audio/webm; codecs=opus;base64," + audio_base64);//TODO: enable autoplay for safari
@@ -349,6 +357,9 @@ function setStartButton(){
     });
 }
 
+function replayAudio(elem){
+    elem.parentNode.querySelector(".voice").play();
+}
 
 //load functions after DOM is loaded
 document.addEventListener('DOMContentLoaded', function(){
