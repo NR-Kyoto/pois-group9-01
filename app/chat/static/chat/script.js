@@ -172,7 +172,7 @@ function sending_selected_texts_setup(){
                     if(text){
                         range = selected_DOM.getRangeAt(0)
                         rect = range.getBoundingClientRect();
-                        pos_x_y = [rect.x,rect.y]
+                        pos_x_y = [rect.x,rect.y+window.pageYOffset]
                         sendSelected(text, context, pos_x_y);
                     }
             } 
@@ -239,8 +239,10 @@ function addWordTooltip(data,context){
     if(data["word_falg"]){
         tooltip.querySelector(".category").innerHTML = data["category"];
         tooltip.querySelector("#register_button").style.display = "";
+    }else{
+        tooltip.querySelector(".category").innerHTML = "翻訳";
+        tooltip.querySelector("#register_button").style.display = "none";
     }
-    document.body.appendChild(tooltip);
 }
 
 function addWordTooltip_show(pos_x_y){
