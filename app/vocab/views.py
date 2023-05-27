@@ -45,7 +45,21 @@ def add_word(request):
     else:
         form = WordbookForm()
 
-    #word = search_word()
+    return render(request, 'vocab/add_word.html', {'form': form})
+
+
+def autofill_word(request):
+
+    # 渡された単語を検索して他要素を自動入力
+    if request.method == 'POST' and request.POST.get('word') :
+        try:
+            form = WordbookForm(search_word(request.POST.get('word')))
+
+        except ValueError:
+            form = WordbookForm(request.POST)
+
+    else:
+        form = WordbookForm(request.POST)
 
     return render(request, 'vocab/add_word.html', {'form': form})
 
