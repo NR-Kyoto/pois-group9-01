@@ -42,6 +42,7 @@ function get_chat_history_list(){
 
 function submit_text_with_chat_history(e,form){
     e.preventDefault();
+    setButtonDisabled(true);
     //let chat_history_list = ;
     //console.log(form);
     let form_data = new FormData(form);
@@ -67,6 +68,7 @@ function submit_text_with_chat_history(e,form){
             const audio_base64 = data["chat"][data["chat"].length-1]["audio"]
             const audio = new Audio("data:audio/webm; codecs=opus;base64," + audio_base64);
             audio.play();
+            setButtonDisabled(false);
         });
     });
 }
@@ -333,11 +335,13 @@ function setButtonDisabled(setDisabled){
 
 function setStartButton(){
     const button = document.querySelector("#start_button");
+    setButtonDisabled(true);
     button.addEventListener("click",(e)=>{
         e.preventDefault();
         const audio = new Audio();
         initializeChat(audio);
         button.style.display = "none";
+        setButtonDisabled(false);
     });
 }
 
