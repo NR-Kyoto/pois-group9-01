@@ -96,6 +96,7 @@ function mic_setup(mediaRecorder){
         mic_button.style.background = "red";
         mic_button.style.color = "black";
         isRecording = true;
+        setButtonDisabled(true);
     }
     function mic_off(){
         mediaRecorder.stop();
@@ -104,15 +105,18 @@ function mic_setup(mediaRecorder){
         mic_button.style.background = "";
         mic_button.style.color = "";
         isRecording = false;
+        setButtonDisabled(false);
     }
+    let timeoutID;
     mic_button.addEventListener("click", function(e) {
         e.preventDefault();
         console.log("mic_button clicked");
+        clearTimeout(timeoutID);
         if(isRecording){
             mic_off();
         } else {
             mic_on();
-            setTimeout(() => {
+            timeoutID = setTimeout(() => {
                 mic_off();
             }, 60000);
         }
@@ -232,7 +236,7 @@ function addWordTooltip(data,context){
     tooltip.querySelector(".word").innerHTML = data["text"];
     tooltip.querySelector(".meanings").innerHTML = data["meaning"];
     tooltip.querySelector(".context").innerHTML = context;
-    if(data["word_flag"]){
+    if(data["word_falg"]){
         tooltip.querySelector(".category").innerHTML = data["category"];
         tooltip.querySelector("#register_button").style.display = "";
     }
@@ -278,12 +282,17 @@ function registerWords(){
         response.json().then(function(data){
             console.log(data);
             //give feedback
+            if(data["saved"]){
+                alert("saved!");
+            }else{
+                alert("failed to save...");
+            }
         });
     });
 }
 
 
-function initializeChat(){
+function initializeChat(audio){
     const request = new Request(
         "/chat/mock_init/",
         {headers: {'X-CSRFToken': csrftoken},
@@ -302,6 +311,9 @@ function initializeChat(){
             entry = data["chat"][0];
             addEntry(entry["speaker"], entry["lines"], entry["isAssistant"]);
             console.log(global_chat_history_list)
+            const audio_base64 = data["chat"][data["chat"].length-1]["audio"]
+            audio.src = ("data:audio/webm; codecs=opus;base64," + audio_base64);//TODO: enable autoplay for safari
+            audio.play();
         });
     });
 }
@@ -310,6 +322,21 @@ function onSubmit(){
     const button = document.querySelector("#submit_button");
     button.click();
     return false;
+}
+
+function setButtonDisabled(setDisabled){
+    const button = document.querySelector("#submit_button");
+    button.disabled = setDisabled;
+}
+
+function setStartButton(){
+    const button = document.querySelector("#start_button");
+    button.addEventListener("click",(e)=>{
+        e.preventDefault();
+        const audio = new Audio();
+        initializeChat(audio);
+        button.style.display = "none";
+    });
 }
 
 
@@ -356,7 +383,10 @@ document.addEventListener('DOMContentLoaded', function(){
         registerWords();
     })
 
-
-    initializeChat()
+    setStartButton();
  });
 
+window.addEventListener("beforeunload", function (e) {
+    e.preventDefault();
+    e.returnValue = "";
+});

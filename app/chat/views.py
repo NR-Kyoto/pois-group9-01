@@ -143,9 +143,9 @@ def mock_post_audio(request):
 
 def mock_init(request):
     if request.method == 'POST':
-        #gpt = start_chat()
+        gpt = start_chat()
         #gpt = generate_text(message_list)
-        gpt = "gpt text" #for testing
+        #gpt = "gpt text" #for testing
 
         audio_base64 = text_to_speech(gpt)
 
