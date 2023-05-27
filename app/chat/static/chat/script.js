@@ -314,8 +314,9 @@ function initializeChat(audio){
             entry = data["chat"][0];
             addEntry(entry["speaker"], entry["lines"], entry["isAssistant"]);
             console.log(global_chat_history_list)
-            const audio_base64 = data["chat"][data["chat"].length-1]["audio"]
-            audio.src = ("data:audio/webm; codecs=opus;base64," + audio_base64);//TODO: enable autoplay for safari
+            const audio_base64_uri = data["chat"][data["chat"].length-1]["audio"]
+            //audio.src = ("data:audio/webm; codecs=opus;base64," + audio_base64);//TODO: enable autoplay for safari
+            audio.src = audio_base64_uri;
             audio.play();
         });
     });
