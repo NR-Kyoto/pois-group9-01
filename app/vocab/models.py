@@ -4,7 +4,7 @@ from login.models import User
 class Wordbook(models.Model):
     user_id = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='ユーザーID')
     word = models.CharField(max_length=50, primary_key=True, verbose_name='単語')
-    meaning = models.TextField(verbose_name='意味')
+    meaning = models.TextField(blank=True, verbose_name='意味')
     pronunciation = models.CharField(max_length=50,blank=True, null=True, verbose_name='発音')
     category = models.CharField(max_length=50,blank=True, null=True, verbose_name='品詞')
     context = models.TextField(blank=True, null=True, verbose_name='文脈')

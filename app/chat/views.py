@@ -6,6 +6,7 @@ import json, base64, io, subprocess, tempfile
 import openai
 import os
 import re
+from .models import Audio
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
@@ -114,6 +115,8 @@ def mock_post(request):
         message_list = clean_message_list(data2)
         message_list.append({"role":"user","content":data})
         gpt = generate_text(message_list)
+
+        Audio.objects.create(text=data, fields={"audio":data_audio})
         #gpt = "gpt text" #for testing
 
         audio_base64 = text_to_speech(gpt)
@@ -148,9 +151,9 @@ def mock_post_audio(request):
 
 def mock_init(request):
     if request.method == 'POST':
-        #gpt = start_chat()
+        gpt = start_chat()
         #gpt = generate_text(message_list)
-        gpt = "gpt text" #for testing
+        #gpt = "gpt text" #for testing
 
         audio_base64 = text_to_speech(gpt)
         audio_base64_uri = "data:audio/mpeg;base64,"+ audio_base64
