@@ -1,10 +1,17 @@
-# middleware.auth.py
 from django.utils.deprecation import MiddlewareMixin
 from django.http import HttpResponseRedirect
 
-# アクセスをログイン必須にする
 class AuthMiddleware(MiddlewareMixin):
     def process_response(self, request, response):
-        if request.path != '/login/' and not request.user.is_authenticated:
+
+        # 未ログイン
+        if not request.user.is_authenticated:
+
+            # ログインと登録はOK
+            if ('/login/' in request.path) or ('/login/signup/' in request.path): 
+                return response
+
             return HttpResponseRedirect('/login/')
+
+
         return response

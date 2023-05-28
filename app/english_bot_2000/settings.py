@@ -54,10 +54,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 
     # ログインしていない状態でのアクセスを防止
-    'home.middleware.auth.AuthMiddleware',
-    'evaluation.middleware.auth.AuthMiddleware',
-    'vocab.middleware.auth.AuthMiddleware',
-    'chat.middleware.auth.AuthMiddleware',
+    'english_bot_2000.middleware.auth.AuthMiddleware',
 ]
 
 ROOT_URLCONF = 'english_bot_2000.urls'
