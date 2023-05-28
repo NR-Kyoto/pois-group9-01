@@ -1,7 +1,6 @@
 @charset "UTF-8";
 /* general */
 
-
 .tooltip {
     display: hidden;
     position: absolute;
@@ -15,6 +14,7 @@
 button {
     background-color: white;
 }
+
 /* mobile (narrow) */
 
 html{
@@ -78,7 +78,6 @@ main{
 .entry{
     width: auto;
     height: fit-content;
-    /*min-height: 0px;*/
     padding: 5px 0px 5px 0px;
     border-top: 2px;
     border-bottom: 0px;
@@ -89,7 +88,6 @@ main{
     display: flex;
     flex-wrap: nowrap;
     justify-content: flex-start;
-    /*align-items: stretch;*/
 }
 
 .entry_user{
@@ -107,11 +105,6 @@ main{
     height: auto;
     margin: 5px 5px 5px 5px;
 }
-/*
-.speaker_area_user{
-    display: none;
-}
-*/
 .speaker {
     text-align: center;
     overflow-wrap: break-word;
@@ -119,19 +112,13 @@ main{
 }
 
 .line-area{
-    /*flex-grow: 1;*/
     position: relative;
     height: auto;
     min-height: 3rem;
     width: calc(100% - (min(15%, 64px) + 5px * 3)*2 );
     margin: 5px 5px 5px 5px;
-    /*flex-grow: 1;*/
 }
-/*
-.line-area-user{
-    margin-left: calc( 15% + 10px);
-}
-*/
+
 .button-play{
     position: absolute;
     right: 0px;

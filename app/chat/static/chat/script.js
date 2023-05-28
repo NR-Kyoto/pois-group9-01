@@ -20,26 +20,6 @@ function getCookie(name){
 
 const csrftoken = getCookie('csrftoken');
 
-/*
-function get_chat_history_list(){
-    const chat_history_entries = document.querySelector(".chat_area").querySelectorAll(".entry");
-    //for each entry, get .speaker and .lines
-    let chat_history_list = [];
-    chat_history_entries.forEach(entry => {
-        const speaker = entry.querySelector(".speaker");
-        const speaker_name = speaker.innerHTML.trim();
-        const isAssistant = speaker.classList.contains('speaker_assistant');
-        const lines = entry.querySelector(".lines").textContent.trim();
-        chat_history_list.push({
-            "speaker": speaker_name,
-            "isAssistant": isAssistant,
-            "lines": lines,
-        });
-    });
-    return chat_history_list;
-}
-*/
-
 function submit_text_with_chat_history(e,form,audio){
     e.preventDefault();
     setButtonDisabled(true);
