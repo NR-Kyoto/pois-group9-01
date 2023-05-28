@@ -5,7 +5,7 @@ table {
 
 th,
 td {
-    padding: 30px 40px;
+    padding: 30px 40px; 
     text-align: left;
     border-bottom: 1px solid #ddd;
 }
@@ -28,6 +28,12 @@ a {
 
 .container {
     margin-top: 50px;
+    max-width: 90%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.head-container { 
     max-width: 500px;
     margin-left: auto;
     margin-right: auto;
@@ -75,7 +81,7 @@ a {
     color: white;
 }
 
-.wordbook-table th,
+/* .wordbook-table th,
 .wordbook-table td {
     width: 150px;
-}
+}*/ 
