@@ -1,7 +1,6 @@
 {% extends 'vocab/base.html' %}
 {% load static %}
 
-
 {% block content %}
 <div class="header">
   <h2>Wordbook</h2>
@@ -11,13 +10,14 @@
 </div>
 <div class="search-form">
   <form method="GET" action="{% url 'vocabpage' %}">
-    <input type="text" name="search_query" placeholder="Search by word or meaning" style="width: 300px; height: 30px; font-size: 16px;">
+    <input type="text" name="search_query" placeholder="Search by word or meaning"
+      style="width: 300px; height: 30px; font-size: 16px;">
     <input type="submit" value="Search" style="width: 100px; height: 30px; font-size: 16px;">
-    <a href="/vocab/">Back</a> 
-  </form>  
+    <a href="/vocab/">Back</a>
+  </form>
 </div>
 <div class="table">
-  <table id="wordbookTable">
+  <table id="wordbookTable" class="wordbook-table">
     <thead>
       <tr>
         <th class="hidden-column">User ID</th>
@@ -34,7 +34,7 @@
       <tr>
         <td class="hidden-column">
           {{ wordbook.user_id_id }}
-        </td> 
+        </td>
         <td>{% if wordbook.word %}{{ wordbook.word }}{% endif %}</td>
         <td>{% if wordbook.meaning %}{{ wordbook.meaning }}{% endif %}</td>
         <td>{% if wordbook.pronunciation %}{{ wordbook.pronunciation }}{% endif %}</td>
@@ -50,7 +50,7 @@
         <td colspan="7">No results found.</td>
       </tr>
       {% endfor %}
-    </tbody>    
+    </tbody>
   </table>
 </div>
 {% endblock %}
