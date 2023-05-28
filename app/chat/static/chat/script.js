@@ -40,14 +40,15 @@ function get_chat_history_list(){
 }
 */
 
-function submit_text_with_chat_history(e,form){
+function submit_text_with_chat_history(e,form,audio){
     e.preventDefault();
+    setButtonDisabled(true);
     //let chat_history_list = ;
     //console.log(form);
     let form_data = new FormData(form);
     //form_data.append("chat_history", JSON.stringify(get_chat_history_list()));
     form_data.append("chat_history", JSON.stringify(global_chat_history_list));
-    form_data.append("audio64" , audio64_stash.length > 0 ? audio64_stash : null)
+    form_data.append("audio64" , (audio64_stash.length > 0 && (audio64_stash.split(",")[1]).length > 0) ? audio64_stash : "")
 
     const request = new Request(
         "/chat/mock_post/",
@@ -63,10 +64,12 @@ function submit_text_with_chat_history(e,form){
         response.json().then(function(data){
             //console.log(data);
             updateEntries(data);
-            console.log(data["chat"][1]["audio"]);
-            const audio_base64 = data["chat"][data["chat"].length-1]["audio"]
-            const audio = new Audio("data:audio/webm; codecs=opus;base64," + audio_base64);
+            //console.log(data["chat"][1]["audio"]);
+            const audio_base64_uri = data["chat"][data["chat"].length-1]["audio"]
+            //const audio = new Audio("data:audio/webm; codecs=opus;base64," + audio_base64);
+            audio.src = audio_base64_uri;
             audio.play();
+            setButtonDisabled(false);
         });
     });
 }
@@ -75,14 +78,22 @@ let audio64_stash = "";
 
 function audio_to_base64(e, audioChunks){
     e.preventDefault();
-    const audioBlob = new Blob(audioChunks, {type: 'audio/webm; codecs=opus'});
+    mimeType = MediaRecorder.isTypeSupported('audio/webm;codecs=opus') ? 'audio/webm;codecs=opus' : 'audio/mpeg;';
+    const audioBlob = new Blob(audioChunks , {type: mimeType});
     const reader = new FileReader();
     reader.readAsDataURL(audioBlob)
     reader.onload = () =>{
-        audio64 = (reader.result).split(",")[1];
-        audio64_stash = audio64;
-        sendAudioFile(audio64);
+        audio64_uri = reader.result;
+        audio64_stash = audio64_uri;
+        sendAudioFile(audio64_uri);
+        setAudioOnInput(audio64_uri);
     }
+}
+
+function setAudioOnInput(audio_uri){
+    const input_audio = document.querySelector(".user_input .voice");
+    console.log(input_audio);
+    input_audio.src = audio_uri;
 }
 
 function mic_setup(mediaRecorder){
@@ -124,10 +135,10 @@ function mic_setup(mediaRecorder){
 }
 
 //send audio file to server
-function sendAudioFile(audio64){
+function sendAudioFile(audio64_uri){
     const form_data = new FormData();
     //form_data.append("audio", audioFile);
-    form_data.append("audio", audio64);
+    form_data.append("audio", audio64_uri);
 
 
     const request = new Request(
@@ -147,6 +158,7 @@ function sendAudioFile(audio64){
             const audio_text = data["text"];
             resetInputValue(audio_text);
             //const audio = new Audio("data:audio/webm; codecs=opus;base64," + audio_base64);
+            //const audio = new Audio(data["audio"]);
             //audio.play();
         });
     });
@@ -172,7 +184,7 @@ function sending_selected_texts_setup(){
                     if(text){
                         range = selected_DOM.getRangeAt(0)
                         rect = range.getBoundingClientRect();
-                        pos_x_y = [rect.x,rect.y]
+                        pos_x_y = [rect.x,rect.y+window.pageYOffset]
                         sendSelected(text, context, pos_x_y);
                     }
             } 
@@ -210,7 +222,7 @@ function sendSelected(text, context, pos_x_y){
     });
 }
 
-function addEntry(speaker, lines, isAssistant){
+function addEntry(speaker, lines, isAssistant, audio_uri){
     const chat_area = document.querySelector(".chat_area");
     const template_assistant = document.querySelector("#chat_entry_template_assistant");
     const template_user = document.querySelector("#chat_entry_template_user");
@@ -218,6 +230,7 @@ function addEntry(speaker, lines, isAssistant){
     const clone = template.content.cloneNode(true);
     clone.querySelector(".speaker").innerHTML = speaker;
     clone.querySelector(".lines").innerHTML = lines;
+    clone.querySelector(".voice").src = audio_uri;
     chat_area.appendChild(clone);
 }
 
@@ -225,7 +238,7 @@ function updateEntries(data){
     global_chat_history_list = data["chat"]
     const adding_data = (data["chat"]).slice(data["chat"].length - 2);
     adding_data.forEach(entry => {
-        addEntry(entry["speaker"], entry["lines"], entry["isAssistant"]);
+        addEntry(entry["speaker"], entry["lines"], entry["isAssistant"], entry["audio"]);
     });
     console.log(global_chat_history_list)
 }
@@ -239,8 +252,10 @@ function addWordTooltip(data,context){
     if(data["word_falg"]){
         tooltip.querySelector(".category").innerHTML = data["category"];
         tooltip.querySelector("#register_button").style.display = "";
+    }else{
+        tooltip.querySelector(".category").innerHTML = "翻訳";
+        tooltip.querySelector("#register_button").style.display = "none";
     }
-    document.body.appendChild(tooltip);
 }
 
 function addWordTooltip_show(pos_x_y){
@@ -309,10 +324,11 @@ function initializeChat(audio){
             console.log(data["chat"])
             global_chat_history_list = data["chat"];
             entry = data["chat"][0];
-            addEntry(entry["speaker"], entry["lines"], entry["isAssistant"]);
+            addEntry(entry["speaker"], entry["lines"], entry["isAssistant"], entry["audio"]);
             console.log(global_chat_history_list)
-            const audio_base64 = data["chat"][data["chat"].length-1]["audio"]
-            audio.src = ("data:audio/webm; codecs=opus;base64," + audio_base64);//TODO: enable autoplay for safari
+            const audio_base64_uri = data["chat"][data["chat"].length-1]["audio"]
+            //audio.src = ("data:audio/webm; codecs=opus;base64," + audio_base64);//TODO: enable autoplay for safari
+            audio.src = audio_base64_uri;
             audio.play();
         });
     });
@@ -331,14 +347,19 @@ function setButtonDisabled(setDisabled){
 
 function setStartButton(){
     const button = document.querySelector("#start_button");
+    setButtonDisabled(true);
     button.addEventListener("click",(e)=>{
         e.preventDefault();
         const audio = new Audio();
         initializeChat(audio);
         button.style.display = "none";
+        setButtonDisabled(false);
     });
 }
 
+function replayAudio(elem){
+    elem.parentNode.querySelector(".voice").play();
+}
 
 //load functions after DOM is loaded
 document.addEventListener('DOMContentLoaded', function(){
@@ -348,7 +369,9 @@ document.addEventListener('DOMContentLoaded', function(){
     const submit_button = document.querySelector("#submit_button");
     const form = document.querySelector("#form1");
     submit_button.addEventListener("click", (e) => {
-        submit_text_with_chat_history(e,form);
+        e.preventDefault();
+        const audio = new Audio();
+        submit_text_with_chat_history(e,form,audio);
     });
 
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
