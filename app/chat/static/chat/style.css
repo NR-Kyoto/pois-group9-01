@@ -39,6 +39,16 @@ main{
     align-items: stretch;
 }
 
+.container{
+    height:calc(100% - 20px - 0.5rem - 0.5rem - 0.1325rem - 0.3125rem - 1.25rem - 8px - 1px - 1px - 3px);
+    margin: 0px;
+    display: flex;
+    flex-wrap: nowrap;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
+}
+
 .page-title{
 
     width: 100%;
