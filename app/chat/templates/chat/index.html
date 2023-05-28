@@ -1,3 +1,4 @@
+{% extends 'chat/base.html' %}
 <!DOCTYPE html>
 <html lang="ja">
 
@@ -5,7 +6,9 @@
         <title>Chat_page</title>
         {% load static %}
         <link rel="stylesheet" type="text/css" href="{% static 'chat/style.css' %}">
+        {% block scripts %}
         <script type="text/javascript" src="{% static 'chat/script.js' %}"></script>
+        {% endblock %}
     </head>
     <body>
         <!--
@@ -14,6 +17,7 @@
             </header>
         -->
         <main>
+            {% block content %}
             <h2 class="page-title">
                 Let's Chat Here!
             </h2>
@@ -105,10 +109,12 @@
             </div>
         </main>
         <!--
-            <footer>
+        <footer>
                 <p>Footer</p>
         </footer>
-    -->
+        -->
+        {% endblock %}
+        
 
 </body>
 

@@ -1,44 +1,25 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Wordbook</title>
-  <style>
-    table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-    th, td {
-      padding: 15px;
-      text-align: left;
-      border-bottom: 1px solid #ddd;
-    }
-    tr:hover {background-color: #f5f5f5;}
-    
-    .hidden-column {
-      display: none;
-    }
-    a {
-    text-decoration: none; 
-    color: black; 
-    cursor: pointer; 
-    font-size: 16px; 
-    margin-left: 10px; 
-  }
-  </style>
-</head>
-<body>
-  <div style="text-align: center;font-size: 25px;">
+{% extends 'vocab/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="head-container">
+  <div class="header">
     <h2>Wordbook</h2>
   </div>
-  <div style="text-align: right;">
-    <a href="/vocab/add/" class="add-button">Add New Word</a>
+  <div class="add-button">
+    <a href="/vocab/add/">Add New Word</a>
   </div>
-  <form method="GET" action="{% url 'vocabpage' %}" style="text-align: center;">
-    <input type="text" name="search_query" placeholder="Search by word or meaning" style="width: 300px; height: 30px; font-size: 16px;">
-    <a type="submit" style="width: 100px; height: 30px; font-size: 16px;">Search</a>
-    <a href="/vocab/" style="margin-left: 10px; font-size: 16px;">Back</a> 
-  </form>  
-  <table id="wordbookTable">
+  <div class="search-form">
+    <form method="GET" action="{% url 'vocabpage' %}">
+      <input type="text" name="search_query" placeholder="Search by word or meaning"
+        style="width: 300px; height: 30px; font-size: 16px;">
+      <input type="submit" value="Search" style="width: 100px; height: 30px; font-size: 16px;">
+      <a href="/vocab/">Back</a>
+    </form>
+  </div>
+</div>
+<div class="table">
+  <table id="wordbookTable" class="wordbook-table">
     <thead>
       <tr>
         <th class="hidden-column">User ID</th>
@@ -55,14 +36,14 @@
       <tr>
         <td class="hidden-column">
           {{ wordbook.user_id_id }}
-        </td> 
+        </td>
         <td>{% if wordbook.word %}{{ wordbook.word }}{% endif %}</td>
         <td>{% if wordbook.meaning %}{{ wordbook.meaning }}{% endif %}</td>
         <td>{% if wordbook.pronunciation %}{{ wordbook.pronunciation }}{% endif %}</td>
         <td>{% if wordbook.category %}{{ wordbook.category }}{% endif %}</td>
         <td>{% if wordbook.context %}{{ wordbook.context }}{% endif %}</td>
         <td>
-          <a href="/vocab/edit/{{ wordbook.user_id_id }}/{{ wordbook.word }}/" class="edit-button">Edit</a>
+          <a href="/vocab/edit/{{ wordbook.user__id_id }}/{{ wordbook.word }}/" class="edit-button">Edit</a>
           <a href="/vocab/delete/{{ wordbook.user_id_id }}/{{ wordbook.word }}/" class="delete-button">Delete</a>
         </td>
       </tr>
@@ -71,7 +52,7 @@
         <td colspan="7">No results found.</td>
       </tr>
       {% endfor %}
-    </tbody>    
+    </tbody>
   </table>
-</body>
-</html>
+</div>
+{% endblock %}
