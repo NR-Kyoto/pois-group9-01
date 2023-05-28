@@ -5,7 +5,7 @@ table {
 
 th,
 td {
-    padding: 15px;
+    padding: 30px 40px; 
     text-align: left;
     border-bottom: 1px solid #ddd;
 }
@@ -28,6 +28,12 @@ a {
 
 .container {
     margin-top: 50px;
+    max-width: 90%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.head-container { 
     max-width: 500px;
     margin-left: auto;
     margin-right: auto;
@@ -50,7 +56,10 @@ a {
 }
 
 .table {
-    margin-top: 20px;
+    margin-top: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .edit-button,
@@ -71,3 +80,8 @@ a {
     background-color: #ff0000;
     color: white;
 }
+
+/* .wordbook-table th,
+.wordbook-table td {
+    width: 150px;
+}*/ 
