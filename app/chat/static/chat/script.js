@@ -1,5 +1,7 @@
 console.log("loaded");
 
+let global_chat_history_list = []
+
 //get csrf token
 function getCookie(name){
     let cookieValue = null;
@@ -18,7 +20,7 @@ function getCookie(name){
 
 const csrftoken = getCookie('csrftoken');
 
-
+/*
 function get_chat_history_list(){
     const chat_history_entries = document.querySelector(".chat_area").querySelectorAll(".entry");
     //for each entry, get .speaker and .lines
@@ -36,14 +38,16 @@ function get_chat_history_list(){
     });
     return chat_history_list;
 }
+*/
 
-function submit_text_with_chat_history(e,form, chat_history_list){
+function submit_text_with_chat_history(e,form,audio){
     e.preventDefault();
     //let chat_history_list = ;
     //console.log(form);
     let form_data = new FormData(form);
-    form_data.append("chat_history", JSON.stringify(get_chat_history_list()));
-    form_data.append("audio64" , audio64_stash.length > 0 ? audio64_stash : null)
+    //form_data.append("chat_history", JSON.stringify(get_chat_history_list()));
+    form_data.append("chat_history", JSON.stringify(global_chat_history_list));
+    form_data.append("audio64" , (audio64_stash.length > 0 && (audio64_stash.split(",")[1]).length > 0) ? audio64_stash : "")
 
     const request = new Request(
         "/chat/mock_post/",
@@ -57,11 +61,12 @@ function submit_text_with_chat_history(e,form, chat_history_list){
         body: form_data,
     }).then(function(response){
         response.json().then(function(data){
-            console.log(data);
+            //console.log(data);
             updateEntries(data);
-            console.log(data["chat"][1]["audio"]);
-            const audio_base64 = data["chat"][data["chat"].length-1]["audio"]
-            const audio = new Audio("data:audio/webm; codecs=opus;base64," + audio_base64);
+            //console.log(data["chat"][1]["audio"]);
+            const audio_base64_uri = data["chat"][data["chat"].length-1]["audio"]
+            //const audio = new Audio("data:audio/webm; codecs=opus;base64," + audio_base64);
+            audio.src = audio_base64_uri;
             audio.play();
         });
     });
@@ -71,13 +76,14 @@ let audio64_stash = "";
 
 function audio_to_base64(e, audioChunks){
     e.preventDefault();
-    const audioBlob = new Blob(audioChunks, {type: 'audio/webm; codecs=opus'});
+    mimeType = MediaRecorder.isTypeSupported('audio/webm;codecs=opus') ? 'audio/webm;codecs=opus' : 'audio/mpeg;';
+    const audioBlob = new Blob(audioChunks , {type: mimeType});
     const reader = new FileReader();
     reader.readAsDataURL(audioBlob)
     reader.onload = () =>{
-        audio64 = (reader.result).split(",")[1];
-        audio64_stash = audio64;
-        sendAudioFile(audio64);
+        audio64_uri = reader.result;
+        audio64_stash = audio64_uri;
+        sendAudioFile(audio64_uri);
     }
 }
 
@@ -92,6 +98,7 @@ function mic_setup(mediaRecorder){
         mic_button.style.background = "red";
         mic_button.style.color = "black";
         isRecording = true;
+        setButtonDisabled(true);
     }
     function mic_off(){
         mediaRecorder.stop();
@@ -100,15 +107,18 @@ function mic_setup(mediaRecorder){
         mic_button.style.background = "";
         mic_button.style.color = "";
         isRecording = false;
+        setButtonDisabled(false);
     }
+    let timeoutID;
     mic_button.addEventListener("click", function(e) {
         e.preventDefault();
         console.log("mic_button clicked");
+        clearTimeout(timeoutID);
         if(isRecording){
             mic_off();
         } else {
             mic_on();
-            setTimeout(() => {
+            timeoutID = setTimeout(() => {
                 mic_off();
             }, 60000);
         }
@@ -116,10 +126,10 @@ function mic_setup(mediaRecorder){
 }
 
 //send audio file to server
-function sendAudioFile(audio64){
+function sendAudioFile(audio64_uri){
     const form_data = new FormData();
     //form_data.append("audio", audioFile);
-    form_data.append("audio", audio64);
+    form_data.append("audio", audio64_uri);
 
 
     const request = new Request(
@@ -134,11 +144,12 @@ function sendAudioFile(audio64){
         body: form_data,
     }).then(function(response){
         response.json().then(function(data){
-            console.log(data)
+            //console.log(data)
             //const audio_base64 = data["audio"];
             const audio_text = data["text"];
             resetInputValue(audio_text);
             //const audio = new Audio("data:audio/webm; codecs=opus;base64," + audio_base64);
+            //const audio = new Audio(data["audio"]);
             //audio.play();
         });
     });
@@ -159,8 +170,8 @@ function sending_selected_texts_setup(){
                 && selected_DOM.anchorNode === selected_DOM.focusNode){
                     text = selected_DOM.toString().trim();
                     context = selected_DOM.anchorNode.parentElement.textContent.trim();
-                    console.log("selected text: " + text);
-                    console.log("context :" + context);
+                    //console.log("selected text: " + text);
+                    //console.log("context :" + context);
                     if(text){
                         range = selected_DOM.getRangeAt(0)
                         rect = range.getBoundingClientRect();
@@ -190,7 +201,7 @@ function sendSelected(text, context, pos_x_y){
         body: form_data,
     }).then(function(response){
         response.json().then(function(data){
-            console.log(data);
+            //console.log(data);
             addWordTooltip(data,context);
             addWordTooltip_show(pos_x_y)
             document.addEventListener('click', (e)=>{
@@ -214,10 +225,12 @@ function addEntry(speaker, lines, isAssistant){
 }
 
 function updateEntries(data){
+    global_chat_history_list = data["chat"]
     const adding_data = (data["chat"]).slice(data["chat"].length - 2);
     adding_data.forEach(entry => {
-        addEntry(entry["speaker"], entry["text"], entry["isAssistant"]);
+        addEntry(entry["speaker"], entry["lines"], entry["isAssistant"]);
     });
+    console.log(global_chat_history_list)
 }
 
 
@@ -226,7 +239,7 @@ function addWordTooltip(data,context){
     tooltip.querySelector(".word").innerHTML = data["text"];
     tooltip.querySelector(".meanings").innerHTML = data["meaning"];
     tooltip.querySelector(".context").innerHTML = context;
-    if(data["word_flag"]){
+    if(data["word_falg"]){
         tooltip.querySelector(".category").innerHTML = data["category"];
         tooltip.querySelector("#register_button").style.display = "";
     }
@@ -256,7 +269,7 @@ function registerWords(){
     const text = tooltip.querySelector(".word").textContent.trim();
     const selected_JSON = JSON.stringify({"text": text, "context": context});
     form_data.append("selected", selected_JSON);
-    console.log(selected_JSON)
+    //console.log(selected_JSON)
     console.log("registered")
     const request = new Request(
         "/vocab/mock_add_word/",//TODO: change to registering URL
@@ -272,15 +285,63 @@ function registerWords(){
         response.json().then(function(data){
             console.log(data);
             //give feedback
+            if(data["saved"]){
+                alert("saved!");
+            }else{
+                alert("failed to save...");
+            }
         });
     });
 }
 
 
+function initializeChat(audio){
+    const request = new Request(
+        "/chat/mock_init/",
+        {headers: {'X-CSRFToken': csrftoken},
+        }
+    );
 
+    fetch(request, {
+        method: 'POST',
+        mode: 'same-origin',
+        body: "",
+    }).then(function(response){
+        response.json().then(function(data){
+            console.log("initialized");
+            console.log(data["chat"])
+            global_chat_history_list = data["chat"];
+            entry = data["chat"][0];
+            addEntry(entry["speaker"], entry["lines"], entry["isAssistant"]);
+            console.log(global_chat_history_list)
+            const audio_base64_uri = data["chat"][data["chat"].length-1]["audio"]
+            //audio.src = ("data:audio/webm; codecs=opus;base64," + audio_base64);//TODO: enable autoplay for safari
+            audio.src = audio_base64_uri;
+            audio.play();
+        });
+    });
+}
 
+function onSubmit(){
+    const button = document.querySelector("#submit_button");
+    button.click();
+    return false;
+}
 
+function setButtonDisabled(setDisabled){
+    const button = document.querySelector("#submit_button");
+    button.disabled = setDisabled;
+}
 
+function setStartButton(){
+    const button = document.querySelector("#start_button");
+    button.addEventListener("click",(e)=>{
+        e.preventDefault();
+        const audio = new Audio();
+        initializeChat(audio);
+        button.style.display = "none";
+    });
+}
 
 
 //load functions after DOM is loaded
@@ -291,7 +352,9 @@ document.addEventListener('DOMContentLoaded', function(){
     const submit_button = document.querySelector("#submit_button");
     const form = document.querySelector("#form1");
     submit_button.addEventListener("click", (e) => {
-        submit_text_with_chat_history(e,form);
+        e.preventDefault();
+        const audio = new Audio();
+        submit_text_with_chat_history(e,form,audio);
     });
 
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
@@ -325,5 +388,11 @@ document.addEventListener('DOMContentLoaded', function(){
         e.preventDefault();
         registerWords();
     })
+
+    setStartButton();
  });
 
+window.addEventListener("beforeunload", function (e) {
+    e.preventDefault();
+    e.returnValue = "";
+});

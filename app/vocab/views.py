@@ -11,6 +11,7 @@ from login.models import User
 from bs4 import BeautifulSoup 
 import requests
 import re
+import json
 
 from deep_translator import GoogleTranslator # 翻訳
 
@@ -44,7 +45,21 @@ def add_word(request):
     else:
         form = WordbookForm()
 
-    word = search_word()
+    return render(request, 'vocab/add_word.html', {'form': form})
+
+
+def autofill_word(request):
+
+    # 渡された単語を検索して他要素を自動入力
+    if request.method == 'POST' and request.POST.get('word') :
+        try:
+            form = WordbookForm(search_word(request.POST.get('word')))
+
+        except ValueError:
+            form = WordbookForm(request.POST)
+
+    else:
+        form = WordbookForm(request.POST)
 
     return render(request, 'vocab/add_word.html', {'form': form})
 
@@ -152,14 +167,18 @@ def mock_post_selected(request):
         return JsonResponse(res)
 
 # Chat中の単語登録
-# TODO error時の処理
 def mock_add_word(request):
 
     res = {"saved" : False}
     if request.method == 'POST':
         selected = json.loads(request.POST.get("selected"))
+    
+        try:
+            dic = search_word(selected["text"])
 
-        dic = search_word(selected["text"])
+        except ValueError:
+            return JsonResponse(res)
+
         dic['context'] = selected["context"]
         form = Wordbook(**dic)
 
