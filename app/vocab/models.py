@@ -1,5 +1,6 @@
 from django.db import models
-from login.models import User
+# from login.models import User
+from django.contrib.auth.models import User
 
 class Wordbook(models.Model):
     user_id = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='ユーザーID')

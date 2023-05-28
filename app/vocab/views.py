@@ -5,7 +5,8 @@ from django.http import HttpResponse, JsonResponse
 
 from .forms import WordbookForm
 from .models import Wordbook
-from login.models import User
+# from login.models import User
+from django.contrib.auth.models import User
 
 # スクレイピング用
 from bs4 import BeautifulSoup 
