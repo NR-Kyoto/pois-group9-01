@@ -41,7 +41,7 @@
         <td>{% if wordbook.category %}{{ wordbook.category }}{% endif %}</td>
         <td>{% if wordbook.context %}{{ wordbook.context }}{% endif %}</td>
         <td>
-          <a href="/vocab/edit/{{ wordbook.user__id_id }}/{{ wordbook.word }}/" class="edit-button">Edit</a>
+          <a href="/vocab/edit/{{ wordbook.user_id_id }}/{{ wordbook.word }}/" class="edit-button">Edit</a>
           <a href="/vocab/delete/{{ wordbook.user_id_id }}/{{ wordbook.word }}/" class="delete-button">Delete</a>
         </td>
       </tr>
