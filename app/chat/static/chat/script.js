@@ -94,6 +94,8 @@ function setAudioOnInput(audio_uri){
     const input_audio = document.querySelector(".user_input .voice");
     console.log(input_audio);
     input_audio.src = audio_uri;
+    const play_button = document.querySelector(".input_voice #play_button");
+    play_button.disabled = false;
 }
 
 function mic_setup(mediaRecorder){
@@ -166,7 +168,7 @@ function sendAudioFile(audio64_uri){
 
 function resetInputValue(text){
     const input = document.querySelector("#text_input");
-    input.value = text;
+    input.innerHTML = text;
 }
 
 //detect selected text
@@ -232,6 +234,8 @@ function addEntry(speaker, lines, isAssistant, audio_uri){
     clone.querySelector(".lines").innerHTML = lines;
     clone.querySelector(".voice").src = audio_uri;
     chat_area.appendChild(clone);
+    chat_area.scrollIntoView(false);
+    
 }
 
 function updateEntries(data){
@@ -407,9 +411,13 @@ document.addEventListener('DOMContentLoaded', function(){
     })
 
     setStartButton();
+
+    const play_button = document.querySelector(".input_voice #play_button");
+    play_button.disabled = true;
  });
 
 window.addEventListener("beforeunload", function (e) {
     e.preventDefault();
     e.returnValue = "";
 });
+
