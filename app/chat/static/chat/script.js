@@ -414,6 +414,8 @@ document.addEventListener('DOMContentLoaded', function(){
 
     const play_button = document.querySelector(".input_voice #play_button");
     play_button.disabled = true;
+
+    addWordTooltip_hide()
  });
 
 window.addEventListener("beforeunload", function (e) {

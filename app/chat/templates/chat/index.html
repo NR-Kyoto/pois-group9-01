@@ -19,7 +19,9 @@
             </h2>
 
             <div class="link_end_chat">
-                <a href='/../../evaluation/'>会話を終了する</a>
+                <a href='/../../evaluation/'>
+                    <button type="button">会話を終了する</button>
+                </a>
             </div>
             
             <!-- chat entry template for assistant-->
@@ -122,16 +124,18 @@
 
             
             <!-- tooltip template -->
-            <div class="tooltip" id="tooltip_instance">
-                <div class="word">
-                </div>
-                <div class="category">
+            <div class="tooltip" id="tooltip_instance" >
+                <div class="word_wrapper">
+                    <div class="word">
+                    </div>
+                    <div class="category">
+                    </div>
+                    <button type="button" id="register_button" name="register_button" style="display:none" >登録</button>
                 </div>
                 <div class="meanings">
                 </div>
                 <div class="context" style="display: none;">
                 </div>
-                <button type="button" id="register_button" name="register_button" style="display:none" >登録</button>
             </div>
         </main>
         <!--
