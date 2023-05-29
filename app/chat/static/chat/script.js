@@ -148,7 +148,7 @@ function sendAudioFile(audio64_uri){
 
 function resetInputValue(text){
     const input = document.querySelector("#text_input");
-    input.innerHTML = text;
+    input.value = text;
 }
 
 //detect selected text
