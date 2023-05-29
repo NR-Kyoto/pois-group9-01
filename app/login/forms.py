@@ -1,11 +1,11 @@
 from django import forms
-from .models import User
+from django.contrib.auth.models import User
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 
-class UserForm(forms.ModelForm):
-    user_id = forms.CharField(label='ユーザID')
-    username = forms.CharField(label='ユーザ名')
-    password = forms.CharField(widget=forms.PasswordInput(), label='パスワード')
-
+class SignupForm(UserCreationForm):
     class Meta:
         model = User
-        fields = ['user_id', 'username', 'password']
+        fields = ['username', 'first_name', 'password1', 'password2']
+
+class LoginForm(AuthenticationForm):
+    pass

@@ -166,7 +166,7 @@ main{
 .text_input{
     height: 2rem;
     flex-grow: 1;
-    font-size: larger;
+    font-size: medium;
     resize: none;
     padding: auto;
 }

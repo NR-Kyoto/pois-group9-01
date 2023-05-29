@@ -5,5 +5,5 @@ class WordbookForm(forms.ModelForm):
 
     class Meta:
         model = Wordbook
-        fields = ('user_id', 'word', 'meaning', 'pronunciation', 'category', 'context')
+        exclude = ('user_id', )
 

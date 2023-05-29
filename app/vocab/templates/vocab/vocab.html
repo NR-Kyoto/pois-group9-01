@@ -35,7 +35,7 @@
       {% for wordbook in wordbook_data %}
       <tr>
         <td class="hidden-column">
-          {{ wordbook.user_id_id }}
+          {{ wordbook.user_id }}
         </td>
         <td>{% if wordbook.word %}{{ wordbook.word }}{% endif %}</td>
         <td>{% if wordbook.meaning %}{{ wordbook.meaning }}{% endif %}</td>
@@ -43,8 +43,8 @@
         <td>{% if wordbook.category %}{{ wordbook.category }}{% endif %}</td>
         <td>{% if wordbook.context %}{{ wordbook.context }}{% endif %}</td>
         <td>
-          <a href="/vocab/edit/{{ wordbook.user_id_id }}/{{ wordbook.word }}/" class="edit-button">Edit</a>
-          <a href="/vocab/delete/{{ wordbook.user_id_id }}/{{ wordbook.word }}/" class="delete-button">Delete</a>
+          <a href="/vocab/edit/{{ wordbook.word }}/" class="edit-button">Edit</a>
+          <a href="/vocab/delete/{{ wordbook.word }}/" class="delete-button">Delete</a>
         </td>
       </tr>
       {% empty %}

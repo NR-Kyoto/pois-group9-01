@@ -5,7 +5,7 @@ from django.http import HttpResponse, JsonResponse
 
 from .forms import WordbookForm
 from .models import Wordbook
-from login.models import User
+from django.contrib.auth.models import User
 
 # スクレイピング用
 from bs4 import BeautifulSoup 
@@ -17,8 +17,6 @@ from deep_translator import GoogleTranslator # 翻訳
 
 weblio_url='https://ejje.weblio.jp/content/'
 
-# TODO ユーザIDを認証データから取得
-
 def vocabpage(request):
 
     form = WordbookForm()
@@ -27,7 +25,7 @@ def vocabpage(request):
 
     # 検索にかかる単語を返す
     wordbook_data = Wordbook.objects.filter(
-        Q(word__icontains=search_query) | Q(meaning__icontains=search_query)
+        Q(user_id__exact=request.user) & (Q(word__icontains=search_query) | Q(meaning__icontains=search_query))
     ).order_by('word') 
 
     context = {'wordbook_data': wordbook_data, 'form': form}
@@ -40,7 +38,9 @@ def add_word(request):
     if request.method == 'POST':
         form = WordbookForm(request.POST)
         if form.is_valid():
-            form.save()
+            obj = form.save(commit=False)
+            obj.user_id = request.user
+            obj.save()
             return redirect('vocabpage')
     else:
         form = WordbookForm()
@@ -63,28 +63,29 @@ def autofill_word(request):
 
     return render(request, 'vocab/add_word.html', {'form': form})
 
-def edit_word(request, user_id_id, word):
-#     # TODO wordを編集する場合は元のデータを削除
+def edit_word(request,  word):
 
     # 該当データを取得
-    word = get_object_or_404(Wordbook, user_id_id=user_id_id, word=word)
+    word = get_object_or_404(Wordbook, user_id=request.user, word=word)
 
     # Saveボタンが押されたら，編集して単語帳ページにリダイレクト
     if request.method == 'POST':
         form = WordbookForm(request.POST, instance=word)
         if form.is_valid():
-            form.save()
+            obj = form.save(commit=False)
+            obj.user_id = request.user
+            obj.save()
             return redirect('vocabpage')
     else:
         form = WordbookForm(instance=word)
 
-    return render(request, 'vocab/edit_word.html', {'form': form, 'user_id_id': user_id_id, 'word': word})
+    return render(request, 'vocab/edit_word.html', {'form': form, 'word': word})
 
 
-def delete_word(request, user_id_id, word):
+def delete_word(request, word):
 
     # 該当データを取得
-    word = get_object_or_404(Wordbook, user_id_id=user_id_id, word=word)
+    word = get_object_or_404(Wordbook, user_id=request.user, word=word)
 
     # deleteボタンが押されたら，削除して単語帳ページにリダイレクト
     if request.method == 'POST':
@@ -129,7 +130,6 @@ def search_word(word):
     example = soup.find(class_='KejjeYrEn').get_text() if soup.find(class_='KejjeYrEn') else ''
 
     return {
-            "user_id": User.objects.all()[0], # TODO
             "word": word,
             "meaning": japanese,
             "pronunciation": pronunciation,
@@ -180,9 +180,11 @@ def mock_add_word(request):
             return JsonResponse(res)
 
         dic['context'] = selected["context"]
-        form = Wordbook(**dic)
 
-        form.save()
+        obj = Wordbook(**dic)
+        obj.user_id = request.user
+        obj.save()
+
         res['saved'] = True
 
     return JsonResponse(res)
