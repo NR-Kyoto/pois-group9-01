@@ -1,17 +1,207 @@
-h1 {
-    background-color :azure;
-}
-
-.icon {
-    width: 10%;
-    height: 10%;
-}
+@charset "UTF-8";
+/* general */
 
 .tooltip {
     display: hidden;
     position: absolute;
     top: 0px;
     left: 0px;
-    background-color: rgba(250, 235, 215, 0.9);
+    padding: 5px;
+    background-color: rgba(255, 255, 255, 0.9);
+    border: 1px solid dimgray;
+    opacity: 1;
 }
 
+button {
+    background-color: white;
+}
+
+/* mobile (narrow) */
+
+html{
+    height: 100%;
+    margin-left: 0px;
+    margin-right: 0px;
+}
+
+body{
+    height: 100%;
+    width: 100%;
+    margin: 0px;
+}
+
+main{
+    height: 100%;
+    margin: 0px;
+    display: flex;
+    flex-wrap: nowrap;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
+}
+
+.container{
+    height:calc(100% - 20px - 0.5rem - 0.5rem - 0.1325rem - 0.3125rem - 1.25rem - 8px - 1px - 1px - 3px);
+    margin: 0px;
+    display: flex;
+    flex-wrap: nowrap;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
+}
+
+.page-title{
+
+    width: 100%;
+}
+
+.link_end_chat{
+    width: fit-content;
+    margin-left: auto;
+    background-color: azure;
+}
+
+.chat_area_wrapper{
+    flex-grow: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-wrap: nowrap;
+    flex-direction: column-reverse;
+    align-items: stretch;
+}
+
+.chat_area {
+    flex-grow: 1;
+    position: relative;
+    bottom: 0px;
+    display: flex;
+    flex-wrap: nowrap;
+    flex-direction: column;
+    justify-content: flex-end;
+}
+
+.start_button{
+    margin-left: auto;
+    margin-right: auto;
+    margin: auto;
+}
+
+.entry{
+    width: auto;
+    height: fit-content;
+    padding: 5px 0px 5px 0px;
+    border-top: 2px;
+    border-bottom: 0px;
+    border-left: 0px;
+    border-right: 0px;
+    border-style: solid;
+    border-color: dimgray;
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+}
+
+.entry_user{
+    flex-direction: row-reverse;
+}
+
+
+.entry_assistant{
+    flex-direction: row;
+}
+
+.speaker_area {
+    width: 15%;
+    max-width: 64px;
+    height: auto;
+    margin: 5px 5px 5px 5px;
+}
+.speaker {
+    text-align: center;
+    overflow-wrap: break-word;
+    font-size: small;
+}
+
+.line-area{
+    position: relative;
+    height: auto;
+    min-height: 3rem;
+    width: calc(100% - (min(15%, 64px) + 5px * 3)*2 );
+    margin: 5px 5px 5px 5px;
+}
+
+.button-play{
+    position: absolute;
+    right: 0px;
+    bottom: 0px;
+}
+
+.user_input{
+    padding: 15px 5px 15px 5px;
+    border-top: 2px;
+    border-bottom: 0px;
+    border-left: 0px;
+    border-right: 0px;
+    border-style: solid;
+    border-color: dimgray;
+}
+
+.input_area{
+    display: flex;
+    flex-wrap: nowrap;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: stretch;
+}
+
+.input_voice{
+    display: flex;
+    flex-wrap: nowrap;
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: stretch;
+    flex-grow: 1;
+}
+
+.text_input{
+    height: 2rem;
+    flex-grow: 1;
+    font-size: larger;
+    resize: none;
+    padding: auto;
+}
+
+.icon {
+    width: 100%;
+    height: 100%;
+}
+
+.word_wrapper{
+    display: flex;
+    flex-wrap: nowrap;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: stretch;
+}
+
+.word{
+    margin-right: 5px;
+}
+
+.category{
+    margin-right: 5px;
+}
+
+
+/* PC (wide) */
+
+@media screen and (min-width: 600px) {
+    html{
+        width: max(600px, 50%);
+        margin-left: auto;
+        margin-right: auto;
+        box-shadow: 0px 2px 2px 1px rgba(0, 0, 0, 0.2),
+                    0px -2px 2px 1px rgba(0, 0, 0, 0.2);
+    }
+
+}

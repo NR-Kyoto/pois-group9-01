@@ -20,26 +20,6 @@ function getCookie(name){
 
 const csrftoken = getCookie('csrftoken');
 
-/*
-function get_chat_history_list(){
-    const chat_history_entries = document.querySelector(".chat_area").querySelectorAll(".entry");
-    //for each entry, get .speaker and .lines
-    let chat_history_list = [];
-    chat_history_entries.forEach(entry => {
-        const speaker = entry.querySelector(".speaker");
-        const speaker_name = speaker.innerHTML.trim();
-        const isAssistant = speaker.classList.contains('speaker_assistant');
-        const lines = entry.querySelector(".lines").textContent.trim();
-        chat_history_list.push({
-            "speaker": speaker_name,
-            "isAssistant": isAssistant,
-            "lines": lines,
-        });
-    });
-    return chat_history_list;
-}
-*/
-
 function submit_text_with_chat_history(e,form,audio){
     e.preventDefault();
     setButtonDisabled(true);
@@ -94,6 +74,8 @@ function setAudioOnInput(audio_uri){
     const input_audio = document.querySelector(".user_input .voice");
     console.log(input_audio);
     input_audio.src = audio_uri;
+    const play_button = document.querySelector(".input_voice #play_button");
+    play_button.disabled = false;
 }
 
 function mic_setup(mediaRecorder){
@@ -166,7 +148,7 @@ function sendAudioFile(audio64_uri){
 
 function resetInputValue(text){
     const input = document.querySelector("#text_input");
-    input.value = text;
+    input.innerHTML = text;
 }
 
 //detect selected text
@@ -232,6 +214,8 @@ function addEntry(speaker, lines, isAssistant, audio_uri){
     clone.querySelector(".lines").innerHTML = lines;
     clone.querySelector(".voice").src = audio_uri;
     chat_area.appendChild(clone);
+    chat_area.scrollIntoView(false);
+    
 }
 
 function updateEntries(data){
@@ -407,9 +391,15 @@ document.addEventListener('DOMContentLoaded', function(){
     })
 
     setStartButton();
+
+    const play_button = document.querySelector(".input_voice #play_button");
+    play_button.disabled = true;
+
+    addWordTooltip_hide()
  });
 
 window.addEventListener("beforeunload", function (e) {
     e.preventDefault();
     e.returnValue = "";
 });
+
