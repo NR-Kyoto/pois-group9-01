@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure--*%vukxnjh0=1hf^9&z=hkp%ly-^$#gyn%c)--jj9up=*vu(xg
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['172.174.47.204', 'localhost', '127.0.0.1']
 
 
 # Application definition
@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'login.apps.LoginConfig',
     'vocab.apps.VocabConfig',
     'chat.apps.ChatConfig',
+    'django_extensions',
 ]
 
 MIDDLEWARE = [
@@ -136,3 +137,34 @@ STATIC_ROOT = BASE_DIR / 'static'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_REDIRECT_URL = '/home/'
+
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+        },
+    },
+    "root": {
+        "handlers": ["console"],
+        "level": "WARNING",
+    },
+    'loggers': {
+        'werkzeug': {
+            'handlers': ['console'],
+            'level': 'WARN',
+            'propagate': True,
+        },
+    },
+}
+
+
+# 起動するIPアドレスとポートを指定
+#RUNSERVERPLUS_SERVER_ADDRESS_PORT = '0.0.0.0:8000'
+
+# SSL関連の設定を有効化
+SECURE_SSL_REDIRECT = True
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
