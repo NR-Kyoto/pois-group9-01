@@ -13,4 +13,4 @@ services:
       - ./app:/root/app
       - ./server.crt:/root/server.crt
     ports:
-      - "8000:8000"
+      - "443:443"
