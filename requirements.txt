@@ -13,3 +13,8 @@ deep-translator
 
 ###### Requirements with Version Specifiers ######`
 django==3.2
+
+###### for Deploy ######
+django-extensions
+Werkzeug
+pyOpenSSL

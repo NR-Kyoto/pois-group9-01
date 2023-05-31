@@ -88,3 +88,24 @@ urlpatterns = [
     path('', views.ビューの関数, name='URLパスの名前'),
 ]
 ```
+
+## デプロイ
+
+以下のファイルを`.env`としてDockerfile等と同じ階層に置く。[参考](https://learn.microsoft.com/en-us/azure/cognitive-services/speech-service/get-started-speech-to-text)
+
+```text
+COG_SERVICE_KEY=[AzureのAPIキー]
+COG_SERVICE_REGION=[地域]
+OPENAI_API_KEY=[openAIのAPIキー]
+```
+
+settings.pyのALLOWED_HOSTS にサーバのドメイン又はIPアドレスを追加。
+
+サーバ証明書を`sever.crt`としてDockerfile等と同じ階層に置く。[参考](https://www.memory-lovers.blog/entry/2019/12/12/100000)
+
+
+Dockerを起動の後、appフォルダ内で
+
+```shell
+python manage.py runserver_plus 0:443 --cert-file ./server.crt
+```
