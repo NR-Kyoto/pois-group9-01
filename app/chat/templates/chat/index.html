@@ -1,0 +1,121 @@
+{% extends 'chat/base.html' %}
+<!DOCTYPE html>
+<html lang="ja">
+
+    <head>
+        <title>Chat_page</title>
+        {% load static %}
+        {% block scripts %}
+        <link rel="stylesheet" type="text/css" href="{% static 'chat/style.css' %}">
+        <script type="text/javascript" src="{% static 'chat/script.js' %}"></script>
+        {% endblock %}
+    </head>
+    <body>
+        <!--
+            <header>
+                <h1>English Bot 2000</h1>
+            </header>
+        -->
+        <main>
+            {% block content %}
+            <h2 class="page-title">
+                Let's Chat Here!
+            </h2>
+
+            <div class="link_end_chat">
+                <a href='/../../evaluation/'>
+                    <button type="button">会話を終了する</button>
+                </a>
+            </div>
+
+            <!-- chat entry template for assistant-->
+            <template id="chat_entry_template_assistant">
+                <div class="entry entry_assistant">
+                    <div class="speaker_area speaker_area_assistant">
+                        <div>
+                            <img src="{% static 'chat/img/animal_neko.png' %}" alt="assistant_img" class="icon">
+                        </div>
+                        <div class="speaker speaker_assistant"></div>
+                    </div>
+                    <div class="line-area line-area-assistant">
+                        <div class="lines"></div>
+                        <audio class="voice"></audio>
+                        <button type="button" class="button button-play" id="play_button" name="play_button" onclick="replayAudio(this)" >Play</button>
+                    </div>
+                </div>
+            </template>
+
+
+            <!-- chat entry template for users -->
+            <template id="chat_entry_template_user">
+                <div class="entry entry_user">
+                    <div class="speaker_area speaker_area_user">
+                        <div>
+                            <img src="{% static 'chat/img/animal_usagi.png' %}" alt="user_img" class="icon">
+                        </div>
+                        <div class="speaker speaker_user"></div>
+                    </div>
+                    <div class="line-area line-area-user">
+                        <div class="lines"></div>
+                        <audio class="voice"></audio>
+                        <button type="button" class="button button-play" id="play_button" name="play_button" onclick="replayAudio(this)">Play</button>
+                    </div>
+                </div>
+            </template>
+
+
+            <!-- chat below -->
+            <div class="chat_area_wrapper">
+                <div class="chat_area">
+                    <div class="start_button">
+                        <button type="button" id="start_button" name="start_button" >会話を開始する</button>
+                    </div>
+                    
+                </div>
+            </div>
+            
+            <div class="user_input">
+                <form id="form1" method="post" onsubmit="return onSubmit();">
+                    {% csrf_token %}
+                    <div class="input_area">
+                        <div class="input_voice">
+                            <!--text input-->
+                            <textarea class="text_input" id="text_input" name="text_input" rows="2">say something to your MIC!</textarea>
+                            <audio class="voice" ></audio>
+                            <button type="button" id="play_button" name="play_button" onclick="replayAudio(this)" >Play</button>
+                            <!--mic activation button-->
+                            <button type="button" id="mic_button" name="mic_button">マイク</button>
+                        </div>
+                        <!--submit button-->
+                        <button type="button" id="submit_button" name="submit_button" >送信</button>
+                    </div>
+                </form>
+            </div>
+
+            
+            <!-- tooltip template -->
+            <div class="tooltip" id="tooltip_instance" >
+                <div class="word_wrapper">
+                    <div class="word">
+                    </div>
+                    <div class="category">
+                    </div>
+                    <button type="button" id="register_button" name="register_button" style="display:none" >登録</button>
+                </div>
+                <div class="meanings">
+                </div>
+                <div class="context" style="display: none;">
+                </div>
+            </div>
+        </main>
+        <!--
+        <footer>
+                <p>Footer</p>
+        </footer>
+        -->
+        {% endblock %}
+        
+
+</body>
+
+</html>

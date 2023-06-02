@@ -1,0 +1,85 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>English_Bot_2000</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="{% static 'vocab/bootstrap.min.css' %}"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cvkP+4XQ6DdcevuvoRx6*sw2jrX" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="{% static 'vocab/style.css' %}">
+    <style>
+        .navbar {
+            margin-bottom: 20px;
+        }
+        .navbar-brand {
+            padding-left: 20px;
+        }        
+    </style>
+    {% block scripts %}
+    {% endblock %}
+</head>
+
+<body>
+    <nav class="navbar navbar-expand navbar-dark bg-dark">
+        <a class="navbar-brand" href="/">English_Bot_2000</a>
+
+        <!--<div class="collapse navbar-collapse">
+            <ul class="navbar-nav ml-auto">
+                {% if user.is_authenticated %}
+                <li class="nav-item">
+                    <a class="nav-link" href="/chat">会話</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/vocab">単語帳</a>
+                </li>
+                <li class="nav-item">
+                    <span class="nav-link">ようこそ、{{ user.username }}さん</span>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/login">ログアウト</a>
+                </li>
+                {% else %}
+                <li class="nav-item">
+                    <a class="nav-link" href="/register">新規登録</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/login">ログイン</a>
+                </li>
+                {% endif %}
+            </ul>
+        </div>-->
+
+
+        <!--ログイン機能ができるまでの簡易ver-->
+        <div class="collapse navbar-collapse">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/chat/mock">会話</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/vocab">単語帳</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/login/logout">ログアウト</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        {% block content %}
+        {% endblock %}
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5SMjL4+pbjUE5t5cw5mZ/vp5Stw" crossorigin="anonymous">
+        </script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYo8Gz4W+2HsuLaFjKT3lG7x4q6U8D0qlE9n0sT7j6H" crossorigin="anonymous">
+        </script>
+</body>
+
+</html>
